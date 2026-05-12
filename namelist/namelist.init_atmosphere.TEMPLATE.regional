@@ -24,7 +24,7 @@
     config_maxsnowalbedo_data = 'MODIS'              
     config_supersample_factor = 3                   
     config_30s_supersample_factor = 1               
-    config_use_spechumd = true                       !JEDI it's false, but I didn’t change it
+    config_use_spechumd = true                       
 /
 &vertical_grid
     config_ztop = 30000.0                   !model top height (m)
