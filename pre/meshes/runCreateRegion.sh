@@ -20,7 +20,7 @@
 #
 # !REVISION HISTORY:
 #   - Por Amanda para automatizar a criação do domínio regional e arquivos de partição.
-#   - Última atualização 24 Mar 2026
+#   - Última atualização 12 Mai 2026
 #
 # !REMARKS:
 #   - O script deve ser executado dentro de um ambiente com módulos disponíveis
