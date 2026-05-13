@@ -169,4 +169,3 @@ chmod +x invariant.slurm
 sbatch --wait ./invariant.slurm
 
 #EOC
-
