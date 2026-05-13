@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------#
 #BOP
 #
-# !SCRIPT: runInitAtmos_LBC_GFS
+# !SCRIPT: runInitAtmos_LBC
 #
 # !DESCRIPTION:
 #   Script para geração das condições de fronteira (LBC)
@@ -18,7 +18,7 @@
 #       regional do MPAS.
 #
 # !CALLING SEQUENCE:
-#   ./runInitAtmos_LBC_GFS.sh <EXP> <LABELI> <LABELF> <AREA> <RES>
+#   ./runInitAtmos_LBC.sh <EXP> <LABELI> <LABELF> <AREA> <RES>
 #
 #     o EXP    : Nome do experimento (ex.: EXP1)
 #     o LABELI : Data inicial no formato YYYYMMDDHH
@@ -27,7 +27,7 @@
 #     o RES    : Resolução
 #
 # !EXAMPLE:
-#   ./runInitAtmos_LBC_GFS.sh EXP1 2025010100 2025010200 SaoPaulo 163842
+#   ./runInitAtmos_LBC.sh EXP1 2025010100 2025010200 SaoPaulo 163842
 #
 # !REVISION HISTORY:
 #   - Adaptado por Amanda.
