@@ -55,9 +55,9 @@ fi
 # Set paths
 #
 
-DIR="/mnt/beegfs/amanda.queiroz/reg/pre/meshes"
-MESH_DIR="/mnt/beegfs/amanda.queiroz/reg/pre/meshes/${AREA}"
-GRID_FILE="/mnt/beegfs/amanda.queiroz/reg/pre/meshes/x1.${RES}.grid.nc"
+DIR="/mnt/beegfs/amanda.queiroz/mpas_jedi_reg/pre/meshes"
+MESH_DIR="/mnt/beegfs/amanda.queiroz/mpas_jedi_reg/pre/meshes/${AREA}"
+GRID_FILE="/mnt/beegfs/amanda.queiroz/mpas_jedi_reg/pre/meshes/x1.${RES}.grid.nc"
 PTS_FILE="${DIR}/pts/${AREA}.ellipse.pts"
 
 cd "$DIR"
