@@ -13,6 +13,7 @@ pre/meshes/
 
 * points-examples/: exemplos de arquivos .pts para definição de regiões
 * x1.163842.grid.nc: arquivo de grade global quase uniforme (60 km)
+* x1.163842.static.nc: arquivo estático global quase uniforme (60 km)
 * create_region: executável para gerar o domínio regional
 * pts/: arquivos .pts usados na prática
 
