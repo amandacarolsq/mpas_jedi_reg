@@ -1,5 +1,5 @@
 ---------- README
----------- Diretório /mnt/beegfs/amanda.queiroz/reg/pre/meshes
+---------- Diretório /mnt/beegfs/amanda.queiroz/mpas_jedi_reg/pre/meshes
 
 --- Descrição:
 Esta pasta contém os aquivos e utilitários necessários para a seleção e construção do domínio regional utilizado no MPAS-JEDI regional. Aqui definimos a geometria do domínio, selecionamos o arquivo de grade global (x1.${RES}.grid.nc) e geramos os arquivos de grade regionais. A pasta limited_area acompanha o create_region (executável necessário). O README.md vem do MPAS-Limited-Area que também explica sobre o create_region.
