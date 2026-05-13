@@ -2,32 +2,29 @@
 #-----------------------------------------------------------------------------#
 #BOP
 #
-# !SCRIPT: runStatic
+# !SCRIPT: runInvariant
 #
 # !DESCRIPTION:
-#   Script para geração do arquivo estático (static.nc) do MPAS regional.
+#   Script para geração do arquivo invariant (invariant.nc) do MPAS-JEDI regional.
 #   O script prepara o ambiente, configura os parâmetros necessários
-#   e executa o mpas_init_atmosphere para criar o arquivo estático
+#   e executa o mpas_init_atmosphere para criar o arquivo invariant
 #   correspondente à área e resolução especificadas.
 #
-#   Essa etapa é responsável apenas pela geração do domínio estático,
-#   não realizando processamento de dados GRIB nem execução do ungrib.
 #
 # !CALLING SEQUENCE:
-#   ./runStatic.sh <EXP> <RES> <AREA>
+#   ./runInvariant.sh <EXP> <LABELI> <RES> <AREA>
 #
 #     o EXP    : Nome do experimento (ex.: EXP1)
 #     o LABELI : Data inicial no formato YYYYMMDDHH
-#     o LABELF : Data final   no formato YYYYMMDDHH
-#     o AREA   : Nome da área/região (ex.: SaoPaulo)
 #     o RES    : Resolução do MPAS
+#     o AREA   : Nome da área/região (ex.: SaoPaulo)
 #
 # !EXAMPLE:
-#   ./runStatic.sh EXP1 163842 SaoPaulo
+#   ./runInvariant.sh EXP1 163842 SaoPaulo
 #
 # !REVISION HISTORY:
 #   - Adaptado por Amanda para rodar o mpas_init_atmosphere 
-#     e gerar o arquivo estático regional (static.nc).
+#     e gerar o arquivo invariante regional (invariant.nc).
 #   - Última modificação 12 Mai 2026
 #
 #
@@ -39,7 +36,7 @@ function usage(){
    sed -n '/^#BOP/,/^#EOP/{/^#BOP/d;/^#EOP/d;p}' ${BASH_SOURCE}
 }
 
-if [ $# -ne 3 ]; then
+if [ $# -ne 4 ]; then
    usage
    exit 1
 fi
@@ -49,8 +46,9 @@ fi
 #
 
 EXP=${1}
-RES=${2}
-AREA=${3}
+LABELI=${2}
+RES=${3}
+AREA=${4}
 
 #
 # Set paths
@@ -66,18 +64,19 @@ TBLDIR=${BASEDIR}/pre/tables
 MESH_DIR=${BASEDIR}/pre/meshes/${AREA}
 NMLDIR=${BASEDIR}/namelist
 EXPDIR=${RUNDIR}/${EXP}
-STATICDIR=${RUNDIR}/${EXP}/static
+INVDIR=${RUNDIR}/${EXP}/invariant/${LABELI:0:4}${LABELI:4:2}${LABELI:6:2}${LABELI:8:2}
 
-if [ ! -d ${STATICDIR} ]; then
-  mkdir -p ${STATICDIR}/logs
+if [ ! -d ${INVDIR} ]; then
+  mkdir -p ${INVDIR}/logs
 fi
 
 #
 
-cd ${STATICDIR}
+cd ${INVDIR}
 
 ln -sf ${TBLDIR}/* .
-ln -s ${MESH_DIR}/${AREA}.grid.nc .
+ln -sf ${MESH_DIR}/${AREA}.grid.nc .
+ln -sf ${RUNDIR}/${EXP}/static/${AREA}.static.nc .
 
 cp -f ${EXEDIR}/mpas_init_atmosphere .
 
@@ -85,13 +84,15 @@ cp -f ${EXEDIR}/mpas_init_atmosphere .
 # Namelist
 #
 
-sed -e "s,#GEODAT#,${GEODATA},g;s,#RES#,${RES},g;s,#AREA#,${AREA},g" \
-	${NMLDIR}/namelist.init_atmosphere.STATIC.${EXP} \
-       > ${STATICDIR}/namelist.init_atmosphere
+start_date=${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}_${LABELI:8:2}:00:00
 
-sed -e "s,#RES#,${RES},g;s,#AREA#,${AREA},g" \
-       	${NMLDIR}/streams.init_atmosphere.STATIC.${EXP} \
-	> ${STATICDIR}/streams.init_atmosphere
+sed -e "s,#LABELI#,${start_date},g;s,#GEODAT#,${GEODATA},g;s,#RES#,${RES},g;s,#AREA#,${AREA},g" \
+	${NMLDIR}/namelist.init_atmosphere.INVARIANT.${EXP} \
+       > ${INVDIR}/namelist.init_atmosphere
+
+sed -e "s,#AREA#,${AREA},g" \
+       	${NMLDIR}/streams.init_atmosphere.INVARIANT.${EXP} \
+	> ${INVDIR}/streams.init_atmosphere
 
 #
 # Seleciona o ncores
@@ -120,12 +121,12 @@ NNODES=1
 NTASKSPN=${cores_stat}
 (( NTASKS = NTASKSPN * NNODES ))
 ln -sf ${MESH_DIR}/${AREA}.graph.info.part.${NTASKS}     .
-JNAME=staticdata
+JNAME=invariantdata
 QUEUE=PESQ1
-cat > static.slurm <<EOF0
+cat > invariant.slurm <<EOF0
 #!/bin/bash
 
-#SBATCH --output=${STATICDIR}/logs/log.static
+#SBATCH --output=${INVDIR}/logs/log.invariant
 #SBATCH --nodes=${NNODES}
 #SBATCH --ntasks-per-node=${NTASKSPN}
 #SBATCH --cpus-per-task=1
@@ -141,30 +142,30 @@ ulimit -s unlimited
 ulimit -c unlimited
 ulimit -v unlimited
 
-cd ${STATICDIR}
+cd ${INVDIR}
 
 echo  "STARTING AT \`date\` "
 Start=\`date +%s.%N\`
-echo \$Start >  ${STATICDIR}/logs/Timing.static
+echo \$Start >  ${INVDIR}/logs/Timing.invariant
 
 date
 
-time mpirun -np ${NTASKS} ${EXEDIR}/mpas_init_atmosphere &> ${STATICDIR}/logs/log.static
+time mpirun -np ${NTASKS} ${EXEDIR}/mpas_init_atmosphere &> ${INVDIR}/logs/log.invariant
 wait
 
 End=\`date +%s.%N\`
 echo  "FINISHED AT \`date\` "
-echo \$End   >> ${STATICDIR}/logs/Timing.static
-echo \$Start \$End | awk '{print \$2 - \$1" sec"}' >>  ${STATICDIR}/logs/Timing.static
+echo \$End   >> ${INVDIR}/logs/Timing.invariant
+echo \$Start \$End | awk '{print \$2 - \$1" sec"}' >>  ${INVDIR}/logs/Timing.invariant
 
-mv ${STATICDIR}/log.init_atmosphere.* ${STATICDIR}/logs
+mv ${INVDIR}/log.init_atmosphere.* ${INVDIR}/logs
 
 date
 exit 0
 EOF0
 
-chmod +x static.slurm
+chmod +x invariant.slurm
 
-sbatch --wait ./static.slurm
+sbatch --wait ./invariant.slurm
 
 #EOC
