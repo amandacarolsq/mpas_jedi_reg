@@ -39,9 +39,9 @@
     config_static_interp = false                    !only static files
     config_native_gwd_static = false                !only static files
     config_vertical_grid = true                     !only these three stages should be enabled
-    config_met_interp = false                        !only these three stages should be enabled
+    config_met_interp = false                       !only these three stages should be enabled
     config_input_sst = false                        !only sst files
-    config_frac_seaice = false                       !only these three stages should be enabled
+    config_frac_seaice = false                      !only these three stages should be enabled
 /
 &io
     config_pio_num_iotasks = 0
