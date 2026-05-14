@@ -10,7 +10,7 @@
     config_nsoillevels = 4      !number of soil layers to be used in MPAS
     config_nfglevels = 38       !number of vertical levels in intermediate file
     config_nfgsoillevels = 4    !number of soil layers in intermediate file
-    config_gocartlevels = 30    !JEDI
+    config_gocartlevels = 30    
 /
 &data_sources
     config_geog_data_path = '#GEODAT#'
@@ -19,12 +19,12 @@
     config_fg_interval = 10800
     config_landuse_data = 'MODIFIED_IGBP_MODIS_NOAH'
     config_topo_data = 'GMTED2010'
-    config_vegfrac_data = 'MODIS'                    !acrescentei
-    config_albedo_data = 'MODIS'                     !acrescentei
-    config_maxsnowalbedo_data = 'MODIS'              !acrescentei
-    config_supersample_factor = 3                    !acrescentei
-    config_30s_supersample_factor = 1                !acrescentei
-    config_use_spechumd = true                       !JEDI it's false, but I didn’t change it
+    config_vegfrac_data = 'MODIS'                    
+    config_albedo_data = 'MODIS'                     
+    config_maxsnowalbedo_data = 'MODIS'              
+    config_supersample_factor = 3                    
+    config_30s_supersample_factor = 1                
+    config_use_spechumd = true                       
 /
 &vertical_grid
     config_ztop = 30000.0                   !model top height (m)
@@ -36,7 +36,7 @@
     config_blend_bdy_terrain = true         !regional = true, global = false
 /
 &interpolation_control
-    config_extrap_airtemp = 'linear'        !MONAN = linear, JEDI = lapse-rate
+    config_extrap_airtemp = 'linear'        
 / 
 &preproc_stages
     config_static_interp = false                    !only static files
