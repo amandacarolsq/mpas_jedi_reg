@@ -5,22 +5,20 @@
 # !SCRIPT: runStatic
 #
 # !DESCRIPTION:
-#   Script para geração do arquivo estático (static.nc) do MPAS regional.
+#   Script para geração do arquivo estático (static.nc) do MPAS-JEDI regional.
 #   O script prepara o ambiente, configura os parâmetros necessários
 #   e executa o mpas_init_atmosphere para criar o arquivo estático
 #   correspondente à área e resolução especificadas.
 #
 #   Essa etapa é responsável apenas pela geração do domínio estático,
-#   não realizando processamento de dados GRIB nem execução do ungrib.
+#   não realizando processamento de dados grib nem execução do ungrib.
 #
 # !CALLING SEQUENCE:
 #   ./runStatic.sh <EXP> <RES> <AREA>
 #
 #     o EXP    : Nome do experimento (ex.: EXP1)
-#     o LABELI : Data inicial no formato YYYYMMDDHH
-#     o LABELF : Data final   no formato YYYYMMDDHH
-#     o AREA   : Nome da área/região (ex.: SaoPaulo)
-#     o RES    : Resolução do MPAS
+#     o RES    : Resolução do experimento (ex.: 163842 para 60 km)
+#     o AREA   : Nome da área (ex.: SaoPaulo)
 #
 # !EXAMPLE:
 #   ./runStatic.sh EXP1 163842 SaoPaulo
@@ -28,7 +26,7 @@
 # !REVISION HISTORY:
 #   - Adaptado por Amanda para rodar o mpas_init_atmosphere 
 #     e gerar o arquivo estático regional (static.nc).
-#   - Última modificação 12 Mai 2026
+#   - Última atualização: 9 Jun 2026
 #
 #
 #EOP
@@ -68,11 +66,11 @@ NMLDIR=${BASEDIR}/namelist
 EXPDIR=${RUNDIR}/${EXP}
 STATICDIR=${RUNDIR}/${EXP}/static
 
+# 
+
 if [ ! -d ${STATICDIR} ]; then
   mkdir -p ${STATICDIR}/logs
 fi
-
-#
 
 cd ${STATICDIR}
 
@@ -116,10 +114,10 @@ echo
 # Script
 #
 
-NNODES=1
-NTASKSPN=${cores_stat}
-(( NTASKS = NTASKSPN * NNODES ))
-ln -sf ${MESH_DIR}/${AREA}.graph.info.part.${NTASKS}     .
+NNODES=${nodes}
+NTASKSPN=128
+#(( NTASKS = NTASKSPN * NNODES ))
+ln -sf ${MESH_DIR}/${AREA}.graph.info.part.${cores_stat}     .
 JNAME=staticdata
 QUEUE=PESQ1
 cat > static.slurm <<EOF0
@@ -129,7 +127,7 @@ cat > static.slurm <<EOF0
 #SBATCH --nodes=${NNODES}
 #SBATCH --ntasks-per-node=${NTASKSPN}
 #SBATCH --cpus-per-task=1
-#SBATCH --ntasks=${NTASKS}
+#SBATCH --ntasks=${cores_stat}
 #SBATCH --exclusive
 #SBATCH --time=01:00:00
 #SBATCH --job-name=${JNAME}
@@ -149,7 +147,7 @@ echo \$Start >  ${STATICDIR}/logs/Timing.static
 
 date
 
-time mpirun -np ${NTASKS} ${EXEDIR}/mpas_init_atmosphere &> ${STATICDIR}/logs/log.static
+time mpirun -np ${cores_stat} ${EXEDIR}/mpas_init_atmosphere &> ${STATICDIR}/logs/log.static
 wait
 
 End=\`date +%s.%N\`
