@@ -6,42 +6,36 @@
 #
 # !DESCRIPTION:
 #   Script para geração das condições de fronteira (LBC)
-#   do MPAS regional, utilizando análises do GFS.
+#   do MPAS-JEDI regional, utilizando análises do GFS.
 #
 #   O script executa as seguintes etapas:
 #     - Prepara a estrutura de diretórios do experimento para cada data de análise;
 #     - Copia e linka o arquivo estático regional (${AREA}.static.nc);
-#     - Cria links simbólicos para os arquivos GRIB2 do GFS correspondentes;
+#     - Cria links simbólicos para os arquivos do GFS correspondentes e para o
+#       arquivo particionado (${AREA}.graph.info.part.*)
 #     - Gera os arquivos namelist e streams do init_atmosphere a partir de templates;
 #     - Submete, via SLURM, a execução paralela do mpas_init_atmosphere;
 #     - Produz os arquivos de LBC necessários para a integração
 #       regional do MPAS.
 #
 # !CALLING SEQUENCE:
-#   ./runInitAtmos_LBC.sh <EXP> <LABELI> <LABELF> <AREA> <RES>
+#   ./runInitAtmos_LBC.sh <EXP> <RES> <AREA> <LABELI> <LABELF> 
 #
 #     o EXP    : Nome do experimento (ex.: EXP1)
 #     o LABELI : Data inicial no formato YYYYMMDDHH
 #     o LABELF : Data final   no formato YYYYMMDDHH
-#     o AREA   : Nome da área/região (ex.: SaoPaulo)
-#     o RES    : Resolução
+#     o AREA   : Nome da área (ex.: SaoPaulo)
+#     o RES    : Resolução do experimento (ex.: 163842 para 60 km)
 #
 # !EXAMPLE:
-#   ./runInitAtmos_LBC.sh EXP1 2025010100 2025010200 SaoPaulo 163842
+#   ./runInitAtmos_LBC.sh EXP1 163842 SaoPaulo 2026051500 2026052000
 #
 # !REVISION HISTORY:
 #   - Adaptado por Amanda.
-#   - Última atualização 12 Mai 2026
+#   - Última atualização: 9 Jun 2026
 #
 # !REMARKS:
-#   O script executa as seguintes etapas:
-#     - Define e organiza os diretórios do experimento;
-#     - Cria link simbólico para o arquivo de particionamento
-#       (${AREA}.graph.info.part.${NTASKS});
-#     - Gera os arquivos namelist e streams do init_atmosphere
-#       a partir de templates;
-#     - Cria e submete, via SLURM, o job para execução paralela
-#       do mpas_init_atmosphere.
+#   - Espera encontrar os dados do GFS organizados por YYYY/MM/DD/HH em GFSDIR.
 #
 #EOP
 #-----------------------------------------------------------------------------#
@@ -61,10 +55,10 @@ fi
 #
 
 EXP=${1}
-LABELI=${2}
-LABELF=${3}
-AREA=${4} # por exemplo: SaoPaulo
-RES=${5} # 163842
+RES=${2}
+AREA=${3}
+LABELI=${4}
+LABELF=${5}
 
 start_date=${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}_${LABELI:8:2}:00:00
 end_date=${LABELF:0:4}-${LABELF:4:2}-${LABELF:6:2}_${LABELF:8:2}:00:00
@@ -83,11 +77,11 @@ SSTDIR=${BASEDIR}/sstdata
 EXEDIR=${BASEDIR}/pre/exec
 PRERUNDIR=${BASEDIR}/pre/run
 TBLDIR=${BASEDIR}/pre/tables
+GEODATA=${BASEDIR}/pre/databcs/WPS_GEOG
 NMLDIR=${BASEDIR}/namelist
 RUNDIR=${BASEDIR}/run
 EXPDIR=${RUNDIR}/${EXP}
 STATICDIR=${RUNDIR}/${EXP}/static
-GEODATA=${BASEDIR}/pre/databcs/WPS_GEOG
 
 GFSRES="0p25"
 
@@ -138,10 +132,10 @@ cd ${RUNINIT}
 # Script
 #
 
-NNODES=1
+NNODES=${nodes}
 NTASKSPN=128
-(( NTASKS = NTASKSPN * NNODES ))
-ln -sf ${MESH_DIR}/${AREA}.graph.info.part.${NTASKS}     ${RUNINIT} # SaoPaulo.graph.info.part.128 em /mnt/beegfs/amanda.queiroz/mpas_jedi_reg/pre/meshes/SaoPaulo
+#(( NTASKS = NTASKSPN * NNODES ))
+ln -sf ${MESH_DIR}/${AREA}.graph.info.part.${cores_stat}     ${RUNINIT}
 JNAME=init_LBC
 QUEUE=PESQ1
 cat > init_LBC.slurm <<EOF0 # ?
@@ -157,11 +151,11 @@ cat > init_LBC.slurm <<EOF0 # ?
 #SBATCH --job-name=${JNAME}
 #SBATCH --partition=${QUEUE}
 
+export OMP_NUM_THREADS=1
+
 ulimit -c unlimited
 ulimit -v unlimited
 ulimit -s unlimited
-
-export OMP_NUM_THREADS=1
 
 cd ${RUNINIT}
 
@@ -228,3 +222,4 @@ if [ 'x'$pid == 'x' ]; then
 fi
 
 #EOC
+
