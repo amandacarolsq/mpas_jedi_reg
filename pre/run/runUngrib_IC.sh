@@ -5,33 +5,33 @@
 # !SCRIPT: runUngrib_IC
 #
 # !DESCRIPTION:
-#   Script para execução do UNGRIB das IC do GFS no MPAS-JEDI regional.
+#   Script para execução do ungrib das condições iniciais (IC) do GFS no MPAS-JEDI regional.
 #   O script prepara o ambiente, cria o link necessário para 
-#   o arquivos GRIB do GFS, gera o namelist apropriado
+#   o arquivo GRIB do GFS, gera o namelist apropriado
 #   e executa o ungrib (unMP.exe).
 #
 # !CALLING SEQUENCE:
-#   ./runUngrib_IC.sh <EXP> <LABELI> <LABELF> <AREA> <RES>
+#   ./runUngrib_IC.sh <EXP> <RES> <AREA> <LABELI> <LABELF> 
 #
 #     o EXP    : Nome do experimento (ex.: EXP1)
 #     o LABELI : Data inicial no formato YYYYMMDDHH
 #     o LABELF : Data final   no formato YYYYMMDDHH
-#     o AREA   : Nome da área/região (ex.: SaoPaulo)
-#     o RES    : Resolução do MPAS
+#     o AREA   : Nome da área (ex.: SaoPaulo)
+#     o RES    : Resolução do experimento (ex.: 163842 para 60 km)
 #
 # !EXAMPLE:
-#   ./runUngrib_IC.sh EXP1 2025010100 2025010200 SaoPaulo 163842
+#   ./runUngrib_IC.sh EXP1 163842 SaoPaulo 2026051500 2026052000
 #
 # !REVISION HISTORY:
-#   - Adaptado por Amanda para executar apenas o UNGRIB.
-#   - Última modificação 12 Mai 2026
+#   - Adaptado por Amanda.
+#   - Última atualização: 9 Jun 2026
 #
 # !REMARKS:
 #   - Espera encontrar os dados do GFS organizados por YYYY/MM/DD/HH em GFSDIR.
-#   - Requer o arquivo estático regional ${AREA}.static.nc já existente.
+#   - Requer o arquivo estático regional (${AREA}.static.nc) já existente.
 #   - Gera arquivos como GFS:2025-09-01_00 dentro de 
 #   EXPDIR=${RUNDIR}/${EXP}/${LABELI:0:10}
-#   - Nessa etapa, só precisa gerar o ungrib do arquivo da data inicial. 
+#   - Nessa etapa, só precisa realizar o ungrib do arquivo da data inicial. 
 #
 #EOP
 #-----------------------------------------------------------------------------#
@@ -51,10 +51,10 @@ fi
 #
 
 EXP=${1}
-LABELI=${2}
-LABELF=${3}
-AREA=${4}
-RES=${5}
+RES=${2}
+AREA=${3}
+LABELI=${4}
+LABELF=${5}
 
 start_date=${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}_${LABELI:8:2}:00:00
 end_date=${LABELF:0:4}-${LABELF:4:2}-${LABELF:6:2}_${LABELF:8:2}:00:00
@@ -71,14 +71,15 @@ RUNDIR=${BASEDIR}/run
 GFSDIR=${BASEDIR}/gfsdata
 DATADIR=${BASEDIR}/pre/datain
 TBLDIR=${BASEDIR}/pre/tables
+PRERUNDIR=${BASEDIR}/pre/run
 NMLDIR=${BASEDIR}/namelist
 EXEDIR=${BASEDIR}/pre/exec
 BNDDIR=${GFSDIR}/${LABELI:0:4}/${LABELI:4:2}/${LABELI:6:2}/${LABELI:8:2}
 EXPDIR=${RUNDIR}/${EXP}
 STATICDIR=${RUNDIR}/${EXP}/static
-PRERUNDIR=${BASEDIR}/pre/run
 
 #
+
 RUNINIT=${RUNDIR}/${EXP}/runinit/${LABELI:0:4}${LABELI:4:2}${LABELI:6:2}${LABELI:8:2}
 LOGDIR=${RUNINIT}/logs
 
@@ -95,6 +96,7 @@ done
 #
 # Recorte dos dados globais do GFS
 #
+
 path_reg=${DATADIR}/regional/${LABELI}
 
 cd ${RUNINIT}/wpsprd
@@ -158,15 +160,15 @@ export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:${HOME}/local/lib64
 
 ldd unMP.exe
 
+#
+# Namelist
+#
+
 cd ${RUNINIT}/wpsprd 
 
 if [ -e namelist.wps ]; then rm -f namelist.wps; fi
 
 rm -f GRIBFILE.* namelist.wps
-
-#
-# Namelist
-#
 
 sed -e "s,#LABELI#,${start_date},g;s,#PREFIX#,GFS,g" \
 	${NMLDIR}/namelist.wps.TEMPLATE.${EXP} > ./namelist.wps
