@@ -5,7 +5,8 @@
 # !SCRIPT: runUngrib_LBC
 #
 # !DESCRIPTION:
-#   Script para execução do ungrib das condições de contorno laterais (LBC) do GFS no MPAS-JEDI regional.
+#   Script para execução do ungrib das condições de contorno laterais (LBC) 
+#   do GFS no MPAS-JEDI regional.
 #   O script prepara o ambiente, cria os links necessários para 
 #   os arquivos grib do GFS, gera o namelist apropriado
 #   e executa o ungrib (unMP.exe).
