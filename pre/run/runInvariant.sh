@@ -12,20 +12,20 @@
 #
 #
 # !CALLING SEQUENCE:
-#   ./runInvariant.sh <EXP> <LABELI> <RES> <AREA>
+#   ./runInvariant.sh <EXP> <RES> <AREA> <LABELI>
 #
 #     o EXP    : Nome do experimento (ex.: EXP1)
-#     o LABELI : Data inicial no formato YYYYMMDDHH
-#     o RES    : Resolução do MPAS
+#     o RES    : Resolução do experimento (ex.: 163842 para 60 km)
 #     o AREA   : Nome da área/região (ex.: SaoPaulo)
+#     o LABELI : Data inicial no formato YYYYMMDDHH
 #
 # !EXAMPLE:
-#   ./runInvariant.sh EXP1 163842 SaoPaulo
+#   ./runInvariant.sh EXP1 163842 SaoPaulo 2026051500
 #
 # !REVISION HISTORY:
 #   - Adaptado por Amanda para rodar o mpas_init_atmosphere 
 #     e gerar o arquivo invariante regional (invariant.nc).
-#   - Última modificação 12 Mai 2026
+#   - Última atualização: 9 Jun 2026
 #
 #
 #EOP
@@ -46,9 +46,9 @@ fi
 #
 
 EXP=${1}
-LABELI=${2}
-RES=${3}
-AREA=${4}
+RES=${2}
+AREA=${3}
+LABELI=${4}
 
 #
 # Set paths
@@ -66,11 +66,11 @@ NMLDIR=${BASEDIR}/namelist
 EXPDIR=${RUNDIR}/${EXP}
 INVDIR=${RUNDIR}/${EXP}/invariant/${LABELI:0:4}${LABELI:4:2}${LABELI:6:2}${LABELI:8:2}
 
+#
+
 if [ ! -d ${INVDIR} ]; then
   mkdir -p ${INVDIR}/logs
 fi
-
-#
 
 cd ${INVDIR}
 
@@ -117,10 +117,10 @@ echo
 # Script
 #
 
-NNODES=1
-NTASKSPN=${cores_stat}
-(( NTASKS = NTASKSPN * NNODES ))
-ln -sf ${MESH_DIR}/${AREA}.graph.info.part.${NTASKS}     .
+NNODES=${nnodes}
+NTASKSPN=128
+#(( NTASKS = NTASKSPN * NNODES ))
+ln -sf ${MESH_DIR}/${AREA}.graph.info.part.${cores_stat}     .
 JNAME=invariantdata
 QUEUE=PESQ1
 cat > invariant.slurm <<EOF0
@@ -130,7 +130,7 @@ cat > invariant.slurm <<EOF0
 #SBATCH --nodes=${NNODES}
 #SBATCH --ntasks-per-node=${NTASKSPN}
 #SBATCH --cpus-per-task=1
-#SBATCH --ntasks=${NTASKS}
+#SBATCH --ntasks=${cores_stat}
 #SBATCH --exclusive
 #SBATCH --time=01:00:00
 #SBATCH --job-name=${JNAME}
@@ -169,3 +169,4 @@ chmod +x invariant.slurm
 sbatch --wait ./invariant.slurm
 
 #EOC
+
