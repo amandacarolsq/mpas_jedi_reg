@@ -5,26 +5,26 @@
 # !SCRIPT: runUngrib_LBC
 #
 # !DESCRIPTION:
-#   Script para execução do UNGRIB das LBC do GFS no MPAS-JEDI regional.
-#   O script prepara o ambiente, cria o link necessário para 
-#   o arquivos GRIB do GFS, gera o namelist apropriado
+#   Script para execução do ungrib das condições de contorno laterais (LBC) do GFS no MPAS-JEDI regional.
+#   O script prepara o ambiente, cria os links necessários para 
+#   os arquivos grib do GFS, gera o namelist apropriado
 #   e executa o ungrib (unMP.exe).
 #
 # !CALLING SEQUENCE:
-#   ./runUngrib_LBC.sh <EXP> <LABELI> <LABELF> <AREA> <RES>
+#   ./runUngrib_LBC.sh <EXP> <RES> <AREA> <LABELI> <LABELF> 
 #
 #     o EXP    : Nome do experimento (ex.: EXP1)
 #     o LABELI : Data inicial no formato YYYYMMDDHH
 #     o LABELF : Data final   no formato YYYYMMDDHH
-#     o AREA   : Nome da área/região (ex.: SaoPaulo)
-#     o RES    : Resolução do MPAS
+#     o AREA   : Nome da área (ex.: SaoPaulo)
+#     o RES    : Resolução do experimento (ex.: 163842 para 60 km)
 #
 # !EXAMPLE:
-#   ./runUngrib_LBC EXP1 2025010100 2025010200 SaoPaulo 163842
+#   ./runUngrib_LBC.sh EXP1 163842 SaoPaulo 2026051500 2026052000
 #
 # !REVISION HISTORY:
 #   - Adaptado por Amanda.
-#   - Última modificação 12 Mai 2026
+#   - Última atualização: 9 Jun 2026
 #
 # !REMARKS:
 #   - Espera encontrar os dados do GFS organizados por YYYY/MM/DD/HH em GFSDIR.
@@ -51,10 +51,10 @@ fi
 #
 
 EXP=${1}
-LABELI=${2}
-LABELF=${3}
-AREA=${4}
-RES=${5}
+RES=${2}
+AREA=${3}
+LABELI=${4}
+LABELF=${5}
 
 start_date=${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}_${LABELI:8:2}:00:00
 end_date=${LABELF:0:4}-${LABELF:4:2}-${LABELF:6:2}_${LABELF:8:2}:00:00
@@ -71,14 +71,15 @@ RUNDIR=${BASEDIR}/run
 GFSDIR=${BASEDIR}/gfsdata
 DATADIR=${BASEDIR}/pre/datain
 TBLDIR=${BASEDIR}/pre/tables
+PRERUNDIR=${BASEDIR}/pre/run
 NMLDIR=${BASEDIR}/namelist
 EXEDIR=${BASEDIR}/pre/exec
 BNDDIR=${GFSDIR}/${LABELI:0:4}/${LABELI:4:2}/${LABELI:6:2}/${LABELI:8:2}
 EXPDIR=${RUNDIR}/${EXP}
 STATICDIR=${RUNDIR}/${EXP}/static
-PRERUNDIR=${BASEDIR}/pre/run
 
 #
+
 RUNINIT=${RUNDIR}/${EXP}/runinit/${LABELI:0:4}${LABELI:4:2}${LABELI:6:2}${LABELI:8:2}
 LOGDIR=${RUNINIT}/logs
 
@@ -86,18 +87,17 @@ LOGDIR=${RUNINIT}/logs
 # Criando diretórios da rodada
 #
 
-if [ ! -e ${RUNINIT} ]; then
-   mkdir -p ${RUNINIT}
-   mkdir -p ${RUNINIT}/logs   
-   mkdir -p ${RUNINIT}/sst
-   mkdir -p ${RUNINIT}/wpsprd
-   mkdir -p ${RUNINIT}/namelist
-fi
+[ ! -d "${RUNINIT}" ] && mkdir -p "${RUNINIT}"
+
+for dir in logs sst wpsprd namelist; do
+    mkdir -p "${RUNINIT}/${dir}"
+done
 
 #
 # Recorte dos dados globais do GFS
 #
-path_reg="${DATADIR}/regional/${LABELI}"
+
+path_reg=${DATADIR}/regional/${LABELI}
 
 #
 # Verifica se existe diretório global (obrigatório)
@@ -113,6 +113,7 @@ fi
 #
 # Garante que o diretório regional exista
 #
+
 mkdir -p "${path_reg}"
 
 cd ${RUNINIT}/wpsprd
@@ -120,6 +121,7 @@ cd ${RUNINIT}/wpsprd
 #
 # Conta arquivos já existentes
 #
+
 nfiles=$(ls -A gfs.t${LABELI:8:2}z.pgrb2.0p25.f*.${LABELI}.grib2 2>/dev/null | wc -l)
 
 if [ "${nfiles}" -le 20 ]; then
@@ -210,12 +212,14 @@ export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:${HOME}/local/lib64
 
 ldd unMP.exe
 
+#
+# Namelist
+#
+
 cd ${RUNINIT}/wpsprd 
 
 if [ -e namelist.wps ]; then rm -f namelist.wps; fi
-#
-# Now surface and upper air atmospheric variables
-#
+
 rm -f GRIBFILE.* namelist.wps
 
 sed -e "s,#LABELI#,${start_date},g;s,#LABELF#,${end_date},g;s,#PREFIX#,GFS,g" \
@@ -249,8 +253,9 @@ fi
    echo "  ### Ungrib completed - \$(date) ####"
    echo "  ####################################"
    echo " " 
+
 #
-# clean up and remove links
+# Clean up and remove links
 #
    mv ${RUNINIT}/wpsprd/Timing.ungrib   ${LOGDIR}/Timing.ungrib.LBC
    mv ungrib.log ${LOGDIR}/ungrib.LBC.log
@@ -258,7 +263,6 @@ fi
    rm -f ${RUNINIT}/wpsprd/link_grib.csh
    cd ..
    ln -sf wpsprd/GFS\:* .
-   
    find ${RUNINIT}/wpsprd -maxdepth 1 -type l -exec rm -f {} \;
    
 echo "End of ungrib Job"
@@ -276,3 +280,4 @@ else
 fi
 
 #EOC
+
