@@ -15,7 +15,7 @@
 # 
 # !REVISION HISTORY:
 #   - Adaptado por Amanda - versão inicial baseada nos scripts do Tutorial do UCAR/NCAR
-#   - Última atualização: 10 Jun 2026
+#   - Última atualização: 14 Jun 2026
 # 
 # !REMARKS:
 #
