@@ -32,7 +32,7 @@
 #
 # !REVISION HISTORY:
 #   - Adaptado por Amanda.
-#   - Última atualização: 9 Jun 2026
+#   - Última atualização: 3 Ago 2026
 #
 # !REMARKS:
 #   - Espera encontrar os dados do GFS organizados por YYYY/MM/DD/HH em GFSDIR.
