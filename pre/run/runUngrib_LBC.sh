@@ -15,10 +15,10 @@
 #   ./runUngrib_LBC.sh <EXP> <RES> <AREA> <LABELI> <LABELF> 
 #
 #     o EXP    : Nome do experimento (ex.: EXP1)
+#     o RES    : Resolução do experimento (ex.: 163842 para 60 km)
+#     o AREA   : Nome da área (ex.: SaoPaulo)
 #     o LABELI : Data inicial no formato YYYYMMDDHH
 #     o LABELF : Data final   no formato YYYYMMDDHH
-#     o AREA   : Nome da área (ex.: SaoPaulo)
-#     o RES    : Resolução do experimento (ex.: 163842 para 60 km)
 #
 # !EXAMPLE:
 #   ./runUngrib_LBC.sh EXP1 163842 SaoPaulo 2026051500 2026052000
