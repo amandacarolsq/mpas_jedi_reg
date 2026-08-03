@@ -28,18 +28,18 @@
 #   ./runDA.sh <EXP> <RES> <AREA> <LABELI> <LABELF> <NHCIC> <FCST> <FROMCIC> <WINDOW>
 # 
 #
-#     o EXP    : Nome do experimento (ex.: EXP1)
-#     o RES    : Resolução do experimento (ex.: 163842 para 60 km)
-#     o AREA   : Nome da área (ex.: SaoPaulo)
-#     o LABELI : Data inicial no formato YYYYMMDDHH
-#     o LABELF : Data final   no formato YYYYMMDDHH
-#     o NHCIC   :   Número de horas do ciclo (ex. 6 [horas])
-#     o FCST    :   Tempo de previsao, em horas (ex. 24 [horas])
-#     o FROMCIC :   O Background vem do ciclo: sim: 1; não: 0
-#     o WINDOW  :   Janela de assimilação (ex. 180 [minutos])
+#     o EXP     : Nome do experimento (ex.: EXP1)
+#     o RES     : Resolução do experimento (ex.: 163842 para 60 km)
+#     o AREA    : Nome da área (ex.: SaoPaulo)
+#     o LABELI  : Data inicial no formato YYYYMMDDHH
+#     o LABELF  : Data final   no formato YYYYMMDDHH
+#     o NHCIC   : Número de horas do ciclo (ex. 6 [horas])
+#     o FCST    : Tempo de previsao, em horas (ex. 24 [horas])
+#     o FROMCIC : O Background vem do ciclo: sim: 1; não: 0
+#     o WINDOW  : Janela de assimilação (ex. 180 [minutos])
 #
 # !EXAMPLE:
-#   ./runDA.sh EXP1 163842 SaoPaulo 2026051500 2026052000 
+#   ./runDA.sh EXP1 163842 SaoPaulo 2026051500 2026052000 6 96 0 180
 #
 # !REVISION HISTORY:
 #   - Adaptado por Amanda.
