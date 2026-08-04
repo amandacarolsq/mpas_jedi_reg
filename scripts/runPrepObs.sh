@@ -34,9 +34,6 @@ subwrd() {
    echo "${str}" | awk -v var=${n} '{print $var}'
 }
 
-#-----------------------------------------------------------------------------#
-# return usage from main program
-#-----------------------------------------------------------------------------#
 usage() {
    echo
    echo "Usage:"
@@ -70,8 +67,8 @@ echo "Processing "$ymdh
 if test ! -s ${RUNDIR}/$ymdh ; then mkdir ${RUNDIR}/$ymdh ; fi
 cd ${RUNDIR}/$ymdh
 
-# this is defined in SMG/etc/mach/egeon_paths.conf
-## Remove or comment below line after integration
+# This is defined in SMG/etc/mach/egeon_paths.conf
+# Remove or comment below line after integration
 ncep_ext=/oper/dados/dboper/raw/arch/mod/ncep/gdas
 
 yy=${ymdh:0:4}
@@ -97,10 +94,10 @@ ln -sf $ncep_ext/$yy/$mm/$dd/gdas.t${hh}z.gpsipw.tm00.bufr_d.nr gpsipw.bufr
 declare -a inpbuf=("1bamua" "1bhrs4" "satwnd")
 declare -a lnkbuf=("amsua"  "hrs4"   "satwnd")
 
-# get length of an array
+# Get length of an array
 arraylength=${#inpbuf[@]}
 
-# use for loop to read all values and indexes
+# Use for loop to read all values and indexes
 for (( i=0; i<${arraylength}; i++ ));
 do
   echo "index: $i, value: ${inpbuf[$i]}"
@@ -123,7 +120,6 @@ cp ${TABLEDIR}/obs_errtable .
 cp ${BINDIR}/obs2ioda-v2.x .
 time ./obs2ioda-v2.x
 
-#
 #  Radiances doesn´t need to convert ioda v1-to-v2
 mkdir -p iodav2
 mv amsua_*obs*.h5   iodav2
@@ -146,6 +142,7 @@ cp ${BINDIR}/ioda-upgrade-v2-to-v3.x .
 #
 # 2.4 Generate IODAv3
 #
+
 rm ./aircraft_obs_${ymdh}.h5 
 rm ./ascat_obs_${ymdh}.h5
 #rm ./gnssro_obs_${ymdh}.h5 
