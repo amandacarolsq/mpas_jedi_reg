@@ -86,7 +86,7 @@ while [[ "$data_ini" -le "$LABELF" ]]; do
 
     if [[ -f "${STATIC_FILE}" ]]; then
         echo "Arquivo estático já existe:"
-        echo "  ${STATIC_FILE}"
+        echo "${STATIC_FILE}"
         echo "Pulando etapa de geração dos arquivos estáticos."
     else
         echo "Arquivo estático não encontrado:"
