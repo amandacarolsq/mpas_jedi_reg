@@ -65,7 +65,7 @@ end_date=${LABELF:0:4}-${LABELF:4:2}-${LABELF:6:2}_${LABELF:8:2}:00:00
 DATA="GFS"
 
 #
-# Set paths
+# Define diretórios
 #
 
 export LD_LIBRARY_PATH=$NETCDF/lib:$HDF5/lib:$GRIB2/lib:$LD_LIBRARY_PATH
