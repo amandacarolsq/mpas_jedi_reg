@@ -25,7 +25,7 @@
 # !REVISION HISTORY:
 #   - Adaptado por Amanda para rodar o mpas_init_atmosphere 
 #     e gerar o arquivo invariante regional (invariant.nc).
-#   - Última atualização: 9 Jun 2026
+#   - Última atualização: 25 Ago 2026
 #
 #
 #EOP

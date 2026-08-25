@@ -32,7 +32,7 @@
 #
 # !REVISION HISTORY:
 #   - Adaptado por Amanda.
-#   - Última atualização: 3 Ago 2026
+#   - Última atualização: 25 Ago 2026
 #
 # !REMARKS:
 #   - Espera encontrar os dados do GFS organizados por YYYY/MM/DD/HH em GFSDIR.
@@ -178,7 +178,7 @@ date
 
 export LD_LIBRARY_PATH="/home/amanda.queiroz/jedi-bundle/build-jedi/lib:$LD_LIBRARY_PATH"
 
-time mpirun -np ${NTASKS} ${EXEDIR}/mpas_init_atmosphere &> ${RUNINIT}/logs/log.init
+time mpirun -np ${cores_stat} ${EXEDIR}/mpas_init_atmosphere &> ${RUNINIT}/logs/log.init
 wait
 # cp ${RUNINIT}/namelist.init_atmosphere_sst ${RUNINIT}/namelist.init_atmosphere 
 # time mpirun -np ${NTASKS} ${EXEDIR}/mpas_init_atmosphere &> ${RUNINIT}/logs/log.init
