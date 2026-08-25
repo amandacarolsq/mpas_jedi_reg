@@ -82,7 +82,7 @@ while [[ "$data_ini" -le "$LABELF" ]]; do
     cd ${BASEDIR}/pre/run
 
     # Verifica se o arquivo estático já existe
-    STATIC_FILE="${BASEDIR}/run/matrix/static/${AREA}.static.nc"
+    STATIC_FILE="${BASEDIR}/run/${EXP}/static/${AREA}.static.nc"
 
     if [[ -f "${STATIC_FILE}" ]]; then
         echo "Arquivo estático já existe:"
@@ -96,7 +96,7 @@ while [[ "$data_ini" -le "$LABELF" ]]; do
     fi
 
     # Verifica se o arquivo invariante já existe
-    INVARIANT_FILE="${BASEDIR}/run/${EXP}/invariant/${AREA}.invariant.nc"
+    INVARIANT_FILE="${BASEDIR}/run/${EXP}/${LABELI}/invariant/${AREA}.invariant.nc"
 
     if [[ -f "${INVARIANT_FILE}" ]]; then
         echo "Arquivo invariante já existe:"
