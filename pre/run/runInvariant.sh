@@ -51,7 +51,7 @@ AREA=${3}
 LABELI=${4}
 
 #
-# Set paths
+# Define diretórios
 #
 
 export LD_LIBRARY_PATH=$NETCDF/lib:$HDF5/lib:$GRIB2/lib:$LD_LIBRARY_PATH
