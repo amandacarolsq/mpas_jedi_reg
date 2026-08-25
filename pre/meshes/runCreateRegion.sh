@@ -49,27 +49,39 @@ RES=${1}
 AREA=${2}
 
 #
-# Set paths
+# Definir diretórios
 #
 
-BASEDIR=${HOMEBE}/pre/meshes
+BASEDIR=${HOMEBE}/mpas_jedi_reg/pre/meshes
 MESH_DIR=${BASEDIR}/${AREA}
 GRID_FILE=${BASEDIR}/x1.${RES}.grid.nc
 PTS_FILE=${BASEDIR}/pts/${AREA}.ellipse.pts
 
-cd ${BASEDIR}
+cd ${BASEDIR} || {
+  echo "Erro: não foi possível acessar ${BASEDIR}"
+  exit 1
+}
 
-# Check files
+# Criar diretório de grade regional se não existir
+if [ ! -d "${MESH_DIR}" ]; then
+  echo "Criando diretório da área: ${MESH_DIR}"
+  mkdir -p "${MESH_DIR}" || {
+    echo "Erro: não foi possível criar o diretório ${MESH_DIR}"
+    exit 1
+  }
+fi
+
+# Conferir arquivos
 if [ ! -f ${MESH_DIR}/${AREA}.grid.nc ]; then
   echo "Criando grade regional..."
 
-# Check static file
+# Conferir arquivo estático
   if [ ! -f ${GRID_FILE} ]; then
     echo "Erro: Arquivo de grade não encontrado: $GRID_FILE"
     exit 1
   fi
 
-   # Check pts file
+# Conferir arquivo pts
   if [ ! -f ${PTS_FILE} ]; then
     echo "Erro: Arquivo .pts da área não encontrado: $PTS_FILE"
     exit 1
@@ -86,12 +98,12 @@ fi
 if [ ! -f ${MESH_DIR}/${AREA}.graph.info.part.128 ]; then
   echo "Gerando partições com METIS..."
   
-  # Load METIS
+  # Carregar METIS
   module use /opt/ohpc/pub/moduledeps/gnu9
   module spider metis
   module load metis
 
-  # Run gpmetis
+  # Rodar gpmetis
   gpmetis -minconn -contig -niter=1000 "${MESH_DIR}/${AREA}.graph.info" 128
   gpmetis -minconn -contig -niter=1000 "${MESH_DIR}/${AREA}.graph.info" 16
   gpmetis -minconn -contig -niter=1000 "${MESH_DIR}/${AREA}.graph.info" 32
