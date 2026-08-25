@@ -145,7 +145,7 @@ cat > init_LBC.slurm <<EOF0 # ?
 #SBATCH --nodes=${NNODES}
 #SBATCH --ntasks-per-node=${NTASKSPN}
 #SBATCH --cpus-per-task=1
-#SBATCH --ntasks=${NTASKS}
+#SBATCH --ntasks=${cores_stat}
 #SBATCH --exclusive
 #SBATCH --time=00:30:00
 #SBATCH --job-name=${JNAME}
