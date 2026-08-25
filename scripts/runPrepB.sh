@@ -81,9 +81,18 @@ while [[ "$data_ini" -le "$LABELF" ]]; do
 
     cd ${BASEDIR}/pre/run
 
-    # Gera os arquivos estáticos apenas na primeira data
-    if [[ "$data_ini" == "$LABELI" ]]; then
-        ./runStatic.sh ${EXP} ${RES} ${AREA}
+    # Verifica se o arquivo estático já existe
+    STATIC_FILE="${BASEDIR}/run/matrix/static/${AREA}.static.nc"
+
+    if [[ -f "${STATIC_FILE}" ]]; then
+        echo "Arquivo estático já existe:"
+        echo "  ${STATIC_FILE}"
+        echo "Pulando etapa de geração dos arquivos estáticos."
+    else
+        echo "Arquivo estático não encontrado:"
+        echo "  ${STATIC_FILE}"
+        echo "Gerando arquivos estáticos..."
+        ./runStatic.sh "${EXP}" "${RES}" "${AREA}"
     fi
 
     ./runInvariant.sh     "$EXP" "$RES" "$AREA" "$data_ini"
