@@ -259,11 +259,11 @@ ln -fs ${RUNINIT}/lbc.*.nc              ${MODELDIR}
 
 if [ $FROMDA -eq 1 ]; then
   cp $(dirname ${EXPDIR})/runda/an.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc   ${MODELDIR}/mpasin.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc
-  cp ${EXPDIR}/invariant/${AREA}.invariant.nc                                                ${MODELDIR}  
+  cp ${EXPDIR}/invariant/${LABELI:0:4}${LABELI:4:2}${LABELI:6:2}${LABELI:8:2}/${AREA}.invariant.nc                                                ${MODELDIR}  
   inputfile=mpasin.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc
  else
   cp $(dirname ${RUNINIT})/${AREA}.init.nc                                                   ${MODELDIR}
-  cp ${EXPDIR}/invariant/${AREA}.invariant.nc                                                ${MODELDIR}
+  cp ${EXPDIR}/invariant/${LABELI:0:4}${LABELI:4:2}${LABELI:6:2}${LABELI:8:2}/${AREA}.invariant.nc                                                ${MODELDIR}
   inputfile=${AREA}.init.nc
 fi
                           
