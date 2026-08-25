@@ -95,7 +95,20 @@ while [[ "$data_ini" -le "$LABELF" ]]; do
         ./runStatic.sh "${EXP}" "${RES}" "${AREA}"
     fi
 
-    ./runInvariant.sh     "$EXP" "$RES" "$AREA" "$data_ini"
+    # Verifica se o arquivo invariante já existe
+    INVARIANT_FILE="${BASEDIR}/run/${EXP}/invariant/${AREA}.invariant.nc"
+
+    if [[ -f "${INVARIANT_FILE}" ]]; then
+        echo "Arquivo invariante já existe:"
+        echo "  ${INVARIANT_FILE}"
+        echo "Pulando etapa de geração do arquivo invariante."
+    else
+        echo "Arquivo invariante não encontrado:"
+        echo "  ${INVARIANT_FILE}"
+        echo "Gerando arquivo invariante..."
+        ./runInvariant.sh "$EXP" "$RES" "$AREA" "$data_ini"
+    fi
+
     ./runUngrib_IC.sh     "$EXP" "$RES" "$AREA" "$data_ini" "$data_fim"
     ./runInitAtmos_IC.sh  "$EXP" "$RES" "$AREA" "$data_ini" "$data_fim"
     ./runUngrib_LBC.sh    "$EXP" "$RES" "$AREA" "$data_ini" "$data_fim"
