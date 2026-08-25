@@ -117,7 +117,7 @@ echo
 # Script
 #
 
-NNODES=${nnodes}
+NNODES=${nodes}
 NTASKSPN=128
 #(( NTASKS = NTASKSPN * NNODES ))
 ln -sf ${MESH_DIR}/${AREA}.graph.info.part.${cores_stat}     .
