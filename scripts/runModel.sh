@@ -105,7 +105,7 @@ MESHES=${BASEDIR}/pre/meshes
 MESH_DIR=${BASEDIR}/pre/meshes/${AREA}
 GFSDIR=${BASEDIR}/gfsdata
 SSTDIR=${BASEDIR}/sstdata
-EXEDIR=${BASEDIR}/pre/exec
+EXEDIR=${BASEDIR}/bin
 PRERUNDIR=${BASEDIR}/pre/run
 TBLDIR=${BASEDIR}/pre/tables
 NMLDIR=${BASEDIR}/namelist
@@ -142,12 +142,12 @@ if [ ! -e ${MODELDIR} ]; then
    mkdir -p ${MODELDIR}/logs
    mkdir -p ${MODELDIR}/mpasprd
    cp -u ${RUNINIT}/${AREA}.init.nc               ${MODELDIR}
-   cp -u ${EXPDIR}/invariant/${AREA}.invariant.nc ${MODELDIR} 
+   cp -u ${EXPDIR}/invariant/${LABELI:0:4}${LABELI:4:2}${LABELI:6:2}${LABELI:8:2}/${AREA}.invariant.nc ${MODELDIR} 
 else
    mkdir -p ${MODELDIR}/logs
    mkdir -p ${MODELDIR}/mpasprd
    cp -u ${RUNINIT}/${AREA}.init.nc               ${MODELDIR}
-   cp -u ${EXPDIR}/invariant/${AREA}.invariant.nc ${MODELDIR}
+   cp -u ${EXPDIR}/invariant/${LABELI:0:4}${LABELI:4:2}${LABELI:6:2}${LABELI:8:2}/${AREA}.invariant.nc ${MODELDIR}
 fi
 
 #
