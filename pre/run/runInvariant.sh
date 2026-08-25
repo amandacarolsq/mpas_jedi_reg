@@ -150,7 +150,7 @@ echo \$Start >  ${INVDIR}/logs/Timing.invariant
 
 date
 
-time mpirun -np ${NTASKS} ${EXEDIR}/mpas_init_atmosphere &> ${INVDIR}/logs/log.invariant
+time mpirun -np ${cores_stat} ${EXEDIR}/mpas_init_atmosphere &> ${INVDIR}/logs/log.invariant
 wait
 
 End=\`date +%s.%N\`
