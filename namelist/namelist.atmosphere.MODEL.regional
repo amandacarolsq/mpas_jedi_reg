@@ -1,0 +1,96 @@
+&nhyd_model
+    config_dt                       = #STEPMODEL#                   
+    config_start_time               = '#LABELI#'                                              
+    config_run_duration             = '#RUN_DURATION#'
+    config_split_dynamics_transport = .true.              !default
+    config_number_of_sub_steps      = 2                   !default
+    config_dynamics_split_steps     = 3                   !default
+    config_h_mom_eddy_visc2         = 0.0                 !default
+    config_h_mom_eddy_visc4         = 0.0                 !default
+    config_v_mom_eddy_visc2         = 0.0                 !default
+    config_h_theta_eddy_visc2       = 0.0                 !default
+    config_h_theta_eddy_visc4       = 0.0                 !default
+    config_v_theta_eddy_visc2       = 0.0                 !default
+    config_horiz_mixing             = '2d_smagorinsky'    !default
+    config_len_disp                 = #LEN_DISP#
+    config_visc4_2dsmag             = 0.05                !default
+    config_w_adv_order              = 3                   !default
+    config_theta_adv_order          = 3                   !default
+    config_scalar_adv_order         = 3                   !default
+    config_u_vadv_order             = 3                   !default
+    config_w_vadv_order             = 3                   !default
+    config_theta_vadv_order         = 3                   !default
+    config_scalar_vadv_order        = 3                   !default
+    config_scalar_advection         = .true.              !default
+    config_positive_definite        = .false.             !default
+    config_monotonic                = .true.              !default
+    config_coef_3rd_order           = 0.25                !default
+    config_epssm                    = 0.1                 !default
+    config_smdiv                    = 0.1                 !default
+    config_apvm_upwinding           = 0.0
+/
+&damping
+    config_zd = 22000.0
+    config_xnutr = 0.2
+/
+&io
+    config_pio_num_iotasks = 0
+    config_pio_stride = 1
+/
+&decomposition
+    config_block_decomp_file_prefix = '#AREA#.graph.info.part.'
+/
+&restart
+    config_do_restart = false
+    config_do_DAcycling = #FROMCICL#
+/
+&printout
+    config_print_global_minmax_vel = true
+    config_print_detailed_minmax_vel = true
+    config_print_global_minmax_sca  = true
+/
+&IAU
+    config_IAU_option = 'off'
+    config_IAU_window_length_s = 21600.
+/
+&physics
+    config_sst_update               = .false.
+    config_sstdiurn_update          = .false.
+    config_deepsoiltemp_update      = .false.
+    config_radtlw_interval          = '00:15:00'
+    config_radtsw_interval          = '00:15:00'
+    config_o3climatology            = .true.
+    config_bucket_update            = 'none' !'1_00:00:00'
+    config_microp_re                = .true.
+    config_sfc_albedo               = .true.
+    config_sfc_snowalbedo           = .true.
+    config_frac_seaice              = .true.
+    config_physics_suite            = 'mesoscale_reference'
+    config_convection_scheme        = 'cu_grell_freitas' 
+/                                                 
+    config_lightning_flash     = true
+    config_microp_scheme       = 'mp_thompson'
+    config_lsm_scheme          = 'noah'
+    config_pbl_scheme          = 'bl_mynn'
+    config_gwdo_scheme         = 'ysu_gwdo'
+    config_radt_cld_scheme     = 'cld_fraction'
+    config_radt_lw_scheme      = 'rrtmg_lw'
+    config_radt_sw_scheme      = 'rrtmg_sw'
+    config_sfclayer_scheme     = 'sf_monin_obukhov'
+    num_soil_layers            = 4
+    config_bucket_rainc        = 100.0
+    config_bucket_rainnc       = 100.0
+    config_bucket_radt         = 1.0e9
+    config_conv_interval       = 'none'
+    config_pbl_interval        = 'bl_mynn'
+    config_n_microp            = 1
+/
+&limited_area
+    config_apply_lbcs = true                   !regional = true, global = false
+/
+&soundings
+    config_sounding_interval = 'none'
+/
+&assimilation
+    config_jedi_da = true
+/
