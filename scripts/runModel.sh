@@ -22,7 +22,7 @@
 #       ao término da simulação.
 #
 # !CALLING SEQUENCE:
-#   ./runModel.sh <EXP> <RES> <AREA> <LABELI> <LABELF> 
+#   ./runModel.sh <EXP> <RES> <AREA> <LABELI> <LABELF> <FCST> <FROMDA>
 #
 #     o EXP     : Nome do experimento (ex.: EXP1)
 #     o RES     : Resolução do experimento (ex.: 163842 para 60 km)
@@ -31,7 +31,7 @@
 #     o LABELF  : Data final   no formato YYYYMMDDHH
 #     o FCST    : Tempo de previsao, em horas (ex. 24 [horas])
 #     o FROMDA  : Se condição inicial vem do Init = 0, se vem da 
-#                         assimilação de dados = 1
+#                 assimilação de dados = 1
 #
 # !EXAMPLE:
 #   ./runModel.sh EXP1 163842 SaoPaulo 2025010100 2025010200 96 0 0
@@ -311,4 +311,3 @@ if [ 'x'$pid == 'x' ]; then
 fi
 
 #EOC
-
