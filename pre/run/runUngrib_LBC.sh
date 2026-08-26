@@ -43,7 +43,7 @@ function usage(){
    sed -n '/^#BOP/,/^#EOP/{/^#BOP/d;/^#EOP/d;p}' ${BASH_SOURCE}
 }
 
-if [ $# -ne 5 ]; then
+if [ $# -ne 6 ]; then
    usage
    exit 1
 fi
