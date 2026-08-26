@@ -48,7 +48,7 @@
 
 if [[ $# -lt 5 ]]; then
     echo "Uso:"
-    echo "  ./runALL.sh <EXP> <RES> <AREA> <LABELI> <LABELF> [INTERVAL]"
+    echo "  ./runPrepB.sh <EXP> <RES> <AREA> <LABELI> <LABELF> [INTERVAL]"
     exit 1
 fi
 
