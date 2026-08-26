@@ -92,28 +92,31 @@ cd ${BASEDIR}/pre/run
 #
 
 STATIC_FILE="${BASEDIR}/run/${MATRIX}/static/${AREA}.static.nc"
-STATIC_DIR="${BASEDIR}/run/${MATRIX}/static/"
-DEST_DIR="${BASEDIR}/run/${EXP}"
+STATIC_DIR="${BASEDIR}/run/${MATRIX}/static"
+DEST_DIR="${BASEDIR}/run/${EXP}/static"
 
 if [[ -f "${STATIC_FILE}" ]]; then
 
     echo "--------------------------------------------------------------"
     echo "Arquivo estático já existe:"
     echo "  ${STATIC_FILE}"
-    echo "Pulando runStatic.sh."
+    echo "Copiando diretório static para:"
+    echo "  ${DEST_DIR}"
     echo "--------------------------------------------------------------"
-    
-    cp -r "${STATIC_DIR}" "${DEST_DIR}"
+
+    mkdir -p "${DEST_DIR}"
+    cp -r "${STATIC_DIR}/." "${DEST_DIR}/"
 
 else
 
     echo "--------------------------------------------------------------"
-    echo "Arquivo estático não encontrado."
+    echo "Arquivo estático não encontrado:"
+    echo "  ${STATIC_FILE}"
     echo "Gerando arquivo estático..."
     echo "--------------------------------------------------------------"
 
     ./runStatic.sh "${EXP}" "${RES}" "${AREA}"
-   
+
 fi
 
 #
@@ -122,6 +125,7 @@ fi
 
 INVARIANT_FILE="${BASEDIR}/run/${MATRIX}/invariant/${AREA}.invariant.nc"
 INVARIANT_DIR="${BASEDIR}/run/${MATRIX}/invariant"
+DEST_INVARIANT_DIR="${BASEDIR}/run/${EXP}/invariant"
 
 if [[ -f "${INVARIANT_FILE}" ]]; then
 
@@ -131,21 +135,23 @@ if [[ -f "${INVARIANT_FILE}" ]]; then
     echo "  ${INVARIANT_FILE}"
     echo "Pulando runInvariant.sh."
     echo "--------------------------------------------------------------"
-    echo ""    
-        
-    cp -r "${INVARIANT_DIR}" "${DEST_DIR}"
+    echo ""
+
+    mkdir -p "${BASEDIR}/run/${EXP}"
+    cp -r "${INVARIANT_DIR}" "${BASEDIR}/run/${EXP}/"
 
 else
-   echo ""
-   echo "--------------------------------------------------------------"
-   echo "Arquivo invariante não encontrado."
-   echo "Gerando arquivo invariante..."
-   echo "--------------------------------------------------------------"
-   echo ""
 
-   ./runInvariant.sh "${EXP}" "${RES}" "${AREA}" "${data_ini}"
+    echo ""
+    echo "--------------------------------------------------------------"
+    echo "Arquivo invariante não encontrado."
+    echo "Gerando arquivo invariante..."
+    echo "--------------------------------------------------------------"
+    echo ""
 
-fi 
+    ./runInvariant.sh "${EXP}" "${RES}" "${AREA}" "${LABELI}"
+
+fi
 
 #
 # IC
