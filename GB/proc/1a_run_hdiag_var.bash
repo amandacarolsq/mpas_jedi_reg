@@ -121,7 +121,7 @@ sed -e "s,#STEPMODEL#,${dt_step},g; \
         s,#LABELI#,${start_date},g" \
     ${NMLDIR}/namelist.atmosphere.MODEL.${EXP} >                                                         ${workdir}/namelist.atmosphere
 
-ln -sf $(dirname $(dirname ${RUNDIR}))/invariant/${LABELI:0:10}/${AREA}.invariant.nc        ${workdir}/${AREA}.invariant.nc
+ln -sf $(dirname $(dirname ${RUNDIR}))/invariant/${AREA}.invariant.nc                       ${workdir}/${AREA}.invariant.nc
 ln -sf $(dirname $(dirname ${RUNDIR}))/runmoc/${LABELI:0:10}/mpasout.${start_dateP}.nc      ${workdir}/bg.${start_dateP}.nc
 ln -sf $(dirname $(dirname ${RUNDIR}))/runmoc/${LABELI:0:10}/mpasout.${start_dateP}.nc      ${workdir}/templateFields.${AREA}.nc
 
