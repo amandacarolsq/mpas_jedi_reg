@@ -49,12 +49,12 @@
 #                           1a,2
 #
 # !EXAMPLE:
-#   ./runDA.sh EXP1 163842 SaoPaulo 2026051500 2026052000 1 128 prep1,prep2,prep3,0,1a,1b,1c,2,3a,3b
+#   ./runGenB.sh EXP1 163842 SaoPaulo 2026051500 2026052000 1 128 prep1,prep2,prep3,0,1a,1b,1c,2,3a,3b
 #
 # !REVISION HISTORY:
 #
 #   - Adaptado por Amanda a partir dos scripts do Tutorial UCAR/NCAR.
-#   - Última atualização: 3 Ago 2026
+#   - Última atualização: 26 Ago 2026
 #
 # !REMARKS:
 #
