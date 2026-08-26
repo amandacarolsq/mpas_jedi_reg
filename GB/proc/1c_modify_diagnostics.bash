@@ -57,21 +57,21 @@ fi
 # remove the missing values for hydro diagnostics
 if [ ${include_hydrometeor} -eq 1 ]; then
   echo "include_hydrometeor = "${include_hydrometeor}
-  cp ${SCRDIR}/etc_modify_missing.bash   ./
+  cp ${GBDIR}/etc_modify_missing.bash   ./
   bash etc_modify_missing.bash
 fi
 
 # modify the corr-length if necessary
 if [ ${isTuneHdiag} -eq 1 ]; then
   echo "isTuneHdiag = "${isTuneHdiag}
-  cp ${SCRDIR}/etc_modify_cor.bash   ./
+  cp ${GBDIR}/etc_modify_cor.bash   ./
   bash etc_modify_cor.bash
 fi
 
 # modify the variance if necessary
 if [ ${isTuneVar} -eq 1 ]; then
   echo "isTuneVar = "${isTuneVar}
-  cp ${SCRDIR}/etc_modify_var.bash     ./
+  cp ${GBDIR}/etc_modify_var.bash     ./
   bash etc_modify_var.bash
 fi
 
