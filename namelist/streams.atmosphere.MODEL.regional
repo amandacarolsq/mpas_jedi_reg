@@ -1,0 +1,83 @@
+<streams>
+
+<immutable_stream name="input"
+                  type="input"
+                  filename_template="#INPUTFILE#"
+                  io_type="pnetcdf,cdf5"
+                  input_interval="initial_only" />
+                  
+<immutable_stream name="da_state"
+                  type="input;output"
+                  filename_template="mpasout.$Y-$M-$DT$h.$m.$s.nc"
+                  packages="jedi_da"
+                  input_interval="initial_only"
+                  output_interval="06:00:00" />
+
+<immutable_stream name="restart"
+                  type="input;output"
+                  filename_template="restart.$Y-$M-$D_$h.$m.$s.nc"
+                  input_interval="initial_only"
+                  output_interval="1_00:00:00" />
+
+<immutable_stream name="iau"
+                  type="input"
+                  filename_template="#AREA#.AmB.$Y-$M-$D_$h.$m.$s.nc"
+                  filename_interval="none"
+                  packages="iau"
+                  input_interval="initial_only" />
+
+<immutable_stream name="lbc_in"
+                  type="input"
+                  filename_template="lbc.$Y-$M-$D_$h.$m.$s.nc"
+                  filename_interval="input_interval"
+                  packages="limited_area"
+                  input_interval="3:00:00" />
+
+<stream name="control"
+        type="input;output"
+        precision="single"
+        io_type="pnetcdf,cdf5"
+        filename_template="control.nc"
+        input_interval="none"
+        output_interval="none"
+        clobber_mode="overwrite">
+        <file name="stream_list.atmosphere.control"/>
+</stream>
+
+<stream name="background"
+        type="input;output"
+        precision="single"
+        io_type="pnetcdf,cdf5"
+        filename_template="background.nc"
+        input_interval="none"
+        output_interval="none"
+        clobber_mode="overwrite">
+        <file name="stream_list.atmosphere.background"/>
+</stream>
+
+<stream name="analysis"
+        type="output"
+        precision="single"
+        io_type="pnetcdf,cdf5"
+        filename_template="analysis.nc"
+        output_interval="none"
+        clobber_mode="overwrite">
+        <file name="stream_list.atmosphere.analysis"/>
+</stream>
+
+<stream name="output"
+        type="output"
+        filename_template="history.$Y-$M-$D_$h.$m.$s.nc"
+        output_interval="6:00:00" >
+	<file name="stream_list.atmosphere.output"/>
+</stream>
+
+<stream name="diagnostics"
+        type="output"
+        filename_template="diag.$Y-$M-$D_$h.$m.$s.nc"
+        output_interval="3:00:00" >
+	<file name="stream_list.atmosphere.diagnostics"/>
+</stream>
+
+</streams>
+
