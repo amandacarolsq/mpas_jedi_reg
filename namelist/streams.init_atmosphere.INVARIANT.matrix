@@ -1,0 +1,13 @@
+<streams>
+<immutable_stream name="input"
+                  type="input"
+                  filename_template="#AREA#.static.nc"
+                  input_interval="initial_only" />
+
+<immutable_stream name="output"
+                  type="output"
+                  filename_template="#AREA#.invariant.nc"
+                  packages="initial_conds"
+                  output_interval="initial_only" />
+
+</streams>
