@@ -12,16 +12,17 @@
 #   e executa o ungrib (unMP.exe).
 #
 # !CALLING SEQUENCE:
-#   ./runUngrib_LBC.sh <EXP> <RES> <AREA> <LABELI> <LABELF> 
+#   ./runUngrib_LBC.sh <EXP> <RES> <AREA> <LABELI> <LABELF> <FCST>
 #
 #     o EXP    : Nome do experimento (ex.: EXP1)
 #     o RES    : Resolução do experimento (ex.: 163842 para 60 km)
 #     o AREA   : Nome da área (ex.: SaoPaulo)
 #     o LABELI : Data inicial no formato YYYYMMDDHH
 #     o LABELF : Data final   no formato YYYYMMDDHH
+#     o FCST    : Tempo de previsao, em horas (ex. 24 [horas])
 #
 # !EXAMPLE:
-#   ./runUngrib_LBC.sh EXP1 163842 SaoPaulo 2026051500 2026052000
+#   ./runUngrib_LBC.sh EXP1 163842 SaoPaulo 2026051500 2026052000 96
 #
 # !REVISION HISTORY:
 #   - Adaptado por Amanda.
@@ -56,6 +57,7 @@ RES=${2}
 AREA=${3}
 LABELI=${4}
 LABELF=${5}
+FCST=${6}
 
 start_date=${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}_${LABELI:8:2}:00:00
 end_date=${LABELF:0:4}-${LABELF:4:2}-${LABELF:6:2}_${LABELF:8:2}:00:00
@@ -138,7 +140,7 @@ if [ "${nfiles}" -le 20 ]; then
         filename=$(basename "$files")
         nhour=$(echo "${filename:21:3}" | gawk '{print $1/1}')
 
-        if [ "${nhour}" -le 48 ]; then
+        if [ "${nhour}" -le "${FCST}" ]; then
             echo "Processing $filename file..."
 
             if [ ! -e "${path_reg}/${filename}" ]; then
