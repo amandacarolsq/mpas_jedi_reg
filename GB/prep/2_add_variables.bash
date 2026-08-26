@@ -21,7 +21,7 @@
 # 
 # !REVISION HISTORY:
 #   - Adaptado por Amanda - versão inicial baseada nos scripts do Tutorial do UCAR/NCAR
-#   - Última atualização: 10 Jun 2026
+#   - Última atualização: 26 Ago 2026
 # 
 # !REMARKS:
 #
@@ -40,8 +40,8 @@ fhr=${6}
 
 outputDir=output
 
-mkdir -p ${workdir}
 workdir=${RUNDIR}/${outputDir}
+mkdir -p ${workdir}
 
 cd ${workdir}
 
