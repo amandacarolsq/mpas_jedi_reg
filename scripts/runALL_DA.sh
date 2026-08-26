@@ -183,7 +183,7 @@ echo "Preparando os dados do GFS para as condições de contorno (LBC):"
 echo "--------------------------------------------------------------"
 echo ""
 
-./runUngrib_LBC.sh "${EXP}" "${RES}" "${AREA}" "${LABELI}" "${LABELF}"
+./runUngrib_LBC.sh "${EXP}" "${RES}" "${AREA}" "${LABELI}" "${LABELF}" "${FCST}"
 
 echo ""
 echo "--------------------------------------------------------------"
@@ -201,7 +201,7 @@ echo ""
     
 cd ${BASEDIR}/scripts
 
-./runPrepObs.sh "${EXP}" "${RES}" "${AREA}" "${LABELI}" "${LABELF}"
+./runPrepObs.sh "${LABELI}" "${LABELF}"
 
 echo ""
 echo "--------------------------------------------------------------"
