@@ -64,7 +64,7 @@ TBLDIR=${BASEDIR}/pre/tables
 MESH_DIR=${BASEDIR}/pre/meshes/${AREA}
 NMLDIR=${BASEDIR}/namelist
 EXPDIR=${RUNDIR}/${EXP}
-INVDIR=${RUNDIR}/${EXP}/invariant/${LABELI:0:4}${LABELI:4:2}${LABELI:6:2}${LABELI:8:2}
+INVDIR=${RUNDIR}/${EXP}/invariant
 
 #
 
