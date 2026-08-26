@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------#
 #BOP
 #
-# !SCRIPT: runDA
+# !SCRIPT: runPrepObs
 #
 # !DESCRIPTION:
 #   JEDI IODA Buffer and PrepBuf observation data convertion to IODA-HDF5
