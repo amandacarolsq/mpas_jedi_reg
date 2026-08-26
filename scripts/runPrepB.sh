@@ -96,7 +96,7 @@ while [[ "$data_ini" -le "$LABELF" ]]; do
     fi
 
     # Verifica se o arquivo invariante já existe
-    INVARIANT_FILE="${BASEDIR}/run/${EXP}/invariant/${LABELI}/${AREA}.invariant.nc"
+    INVARIANT_FILE="${BASEDIR}/run/${EXP}/invariant/${AREA}.invariant.nc"
 
     if [[ -f "${INVARIANT_FILE}" ]]; then
         echo "Arquivo invariante já existe:"
