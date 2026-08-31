@@ -54,7 +54,7 @@
 # !REVISION HISTORY:
 #
 #   - Adaptado por Amanda a partir dos scripts do Tutorial UCAR/NCAR.
-#   - Última atualização: 26 Ago 2026
+#   - Última atualização: 31 Ago 2026
 #
 # !REMARKS:
 #
@@ -205,4 +205,6 @@ if run_step "3b"; then
 
    cp -v ${EXPDIR}/proc/HDIAG_VAR/merge/*nc \
          ${EXPDIR}/B_Matrix_${EXP}/stddev
+   
+   ln -sf ${EXPDIR}/B_Matrix_${EXP} ${BASEDIR}/bedata/B_Matrix
 fi
