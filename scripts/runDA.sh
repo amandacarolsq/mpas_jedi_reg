@@ -43,7 +43,7 @@
 #
 # !REVISION HISTORY:
 #   - Adaptado por Amanda.
-#   - Última atualização: 3 Ago 2026
+#   - Última atualização: 31 Ago 2026
 # 
 # !REMARKS:
 #
@@ -166,7 +166,7 @@ ln -fs ${NMLDIR}/stream_list.atmosphere.analysis   ${DADIR}
 ln -fs ${NMLDIR}/stream_list.atmosphere.background ${DADIR}
 ln -fs ${NMLDIR}/stream_list.atmosphere.control    ${DADIR}
 ln -fs ${NMLDIR}/stream_list.atmosphere.ensemble   ${DADIR}
-ln -fs ${BEMDIR}/B_Matrix_${EXP}                   ${DADIR}/B_Matrix
+ln -fs ${BEMDIR}/B_Matrix                          ${DADIR}/B_Matrix
 
 sed -e "s,#LEN_DISP#,${len_disp},g; s,#LABELI#,${start_date},g;s,#LABELF#,${end_date},g;s,#STEPMODEL#,${dt_step},g;s,#AREA#,${AREA},g; s,#RUN_DURATION#,${run_duration},g;s,#FROMCICL#,${FROMCICL},g" \
          ${NMLDIR}/namelist.atmosphere.TEMPLATE.${EXP} > ${DADIR}/namelist.atmosphere
@@ -247,14 +247,14 @@ export GFORTRAN_CONVERT_UNIT='big_endian:101-200'
 cd ${DADIR}
 
 if [ $FROMCIC -eq 1 ]; then
-  ln -fs ${RUNDIR}/${EXP}/${LABELIprev:0:10}/runmod/mpasout.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc ${EXPDIR}/bg.${ANADATEp}.nc
-  cp     ${RUNDIR}/${EXP}/${LABELIprev:0:10}/runmod/mpasout.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc ${EXPDIR}/an.${ANADATEp}.nc
-  ln -fs ${RUNDIR}/${EXP}/${LABELIprev:0:10}/runmod/mpasout.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc ${EXPDIR}/${inputfile}
+  ln -fs ${RUNDIR}/${EXP}/runmod/${LABELI}/mpasout.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc ${EXPDIR}/bg.${ANADATEp}.nc
+  cp     ${RUNDIR}/${EXP}/runmod/${LABELI}/mpasout.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc ${EXPDIR}/an.${ANADATEp}.nc
+  ln -fs ${RUNDIR}/${EXP}/runmod/${LABELI}/mpasout.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc ${EXPDIR}/${inputfile}
 
  else
-  ln -fs ${RUNDIR}/${EXP}/runmoc/mpasout.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc ${DADIR}/bg.${ANADATEp}.nc
-  cp     ${RUNDIR}/${EXP}/runmoc/mpasout.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc ${DADIR}/an.${ANADATEp}.nc
-  ln -fs ${RUNDIR}/${EXP}/runmoc/mpasout.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc ${DADIR}/${inputfile}
+  ln -fs ${RUNDIR}/${EXP}/runmoc/${LABELI}/mpasout.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc ${DADIR}/bg.${ANADATEp}.nc
+  cp     ${RUNDIR}/${EXP}/runmoc/${LABELI}/mpasout.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc ${DADIR}/an.${ANADATEp}.nc
+  ln -fs ${RUNDIR}/${EXP}/runmoc/${LABELI}/mpasout.${LABELI:0:4}-${LABELI:4:2}-${LABELI:6:2}T${LABELI:8:2}.00.00.nc ${DADIR}/${inputfile}
 fi
 
 echo  "STARTING AT \`date\` "
