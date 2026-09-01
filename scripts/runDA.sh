@@ -115,7 +115,7 @@ OBSDIR=${BASEDIR}/obsdata
 BEMDIR=${BASEDIR}/bedata
 EXPDIR=${RUNDIR}/${EXP}
 MESH_DIR=${BASEDIR}/pre/meshes/${AREA}
-RUNINIT=${EXPDIR}/runinit
+RUNINIT=${RUNDIR}/${EXP}/runinit/${LABELI:0:4}${LABELI:4:2}${LABELI:6:2}${LABELI:8:2}
 
 DADIR=${EXPDIR}/runda
 
@@ -218,8 +218,8 @@ fi
 
 cp ${EXEDIR}/mpasjedi_variational.x  ${DADIR}
 
-NNODES=2
-NTASKSPN=128
+NNODES=1
+NTASKSPN=32
 (( NTASKS = NTASKSPN * NNODES ))
 ln -sf ${MESH_DIR}/${AREA}.graph.info.part.${NTASKS}     ${DADIR}
 JNAME=model_JEDI
