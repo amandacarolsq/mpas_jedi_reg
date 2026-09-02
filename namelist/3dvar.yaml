@@ -1,0 +1,202 @@
+cost function:
+  cost type: 3D-Var
+  time window:
+    begin: '2023-12-21T21:00:00Z'
+    length: PT6H
+  geometry:
+    nml_file: "./namelist.atmosphere"
+    streams_file: "./streams.atmosphere"
+    deallocate non-da fields: true
+    interpolation type: unstructured
+  analysis variables: &incvars
+  - uReconstructZonal
+  - uReconstructMeridional
+  - temperature
+  - spechum
+  - surface_pressure
+  - qc
+  - qi
+  - qr
+  - qs
+  - qg
+  background:
+    state variables: [w, temperature, spechum, uReconstructZonal, uReconstructMeridional, surface_pressure,
+                      qc, qi, qr, qs, qg, theta, rho, u, qv, pressure, landmask, xice, snowc, skintemp,
+                      ivgtyp, isltyp, snowh, znt, t2m, vegfra, u10, v10, lai, smois, tslb]
+    filename: "./bg.2023-12-22T00.00.00.nc"
+    date: &analysisdate '2023-12-22T00:00:00Z'
+  background error:
+    covariance model: SABER
+    saber central block:
+      saber block name: BUMP_NICAS
+      active variables: &ctlvars [uReconstructZonal,uReconstructMeridional,temperature,spechum,surface_pressure,qc,qi,qr,qs,qg]
+      read:
+        io:
+          data directory: ./B_Matrix/bump_nicas
+          files prefix: mpas
+        drivers:
+          multivariate strategy: univariate
+          read local nicas: true
+        nicas:
+          resolution: 4
+          max horizontal grid size: 500000
+        grids:
+          - model:
+              variables:
+              - uReconstructZonal
+              - uReconstructMeridional
+              - temperature
+              - spechum
+              - qc
+              - qi
+              - qr
+              - qs
+              - qg
+          - model:
+              variables:
+              - surface_pressure
+    linear variable change:
+      linear variable change name: Control2Analysis
+      input variables: *ctlvars
+      output variables: *incvars
+  observations:
+    observers:
+            # - obs space:
+            # name: Radiosonde
+            # obsdatain:
+            # engine:
+            # type: H5File
+            # obsfile: ./sondes_obs_2023-12-22T00:00:00.h5
+            # obsdataout:
+            # engine:
+            # type: H5File
+            # obsfile: ./obsout_3dvar_sondes.h5
+            # simulated variables: [airTemperature, windEastward, windNorthward, specificHumidity]
+            # obs operator:
+            # name: VertInterp
+            # observation alias file: ./obsop_name_map.yaml
+            # obs error:
+            # covariance model: diagonal
+            # obs filters:
+            # - filter: PreQC
+            #  maxvalue: 3
+            # - filter: Background Check
+            #  threshold: 3
+            # apply at iterations: 0,1
+            # threshold: 3
+
+
+    - obs space:
+        name: RadarRW
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: ./obs_radar_saoroque_vrad_2023-12-22T00:00:0000.h5
+        obsdataout:
+          engine:
+            type: H5File
+            obsfile: ./hofx-mpas.obs_radar_vrad_2023-12-22T00:00:00.h5
+        simulated variables: [radialVelocity]
+      geovals:
+        filename: ./geovals-obs_radar_vrad_2023-12-22T00:00:00.h5
+      obs error:
+        covariance model: diagonal
+      obs operator:
+        name: RadarRadialVelocity
+
+    - obs space:
+        name: Radar_Reflectivity
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: ./obs_radar_saoroque_ref_2023-12-22T00:00:0000.h5
+        obsdataout:
+          engine:
+            type: H5File
+            obsfile: ./hofx-mpas.obs_radar_cappi_2023-12-22T00:00:0000.h5
+        simulated variables: [reflectivity]
+      geovals:
+        filename: ./geovals-obs_radar_cappi_2023-12-22T00:00:0000.h5
+      vector ref: TestReference
+      tolerance: 1.e-6
+      obs operator:
+        name: DirectZDA
+        #microphysics option: Thompson
+        microphysics option: GFDL
+        use variational method: false
+        vertical coordinate: geopotential_height
+        var_rain_mixing_ratio: rain_water
+        var_snow_mixing_ratio: snow_water
+        var_graupel_mixing_ratio: graupel
+
+    #NOTES for amsua channels:
+    # + 1-3,15 very sensitive to Qv, req. AD/TL (lesser degree ch. 4)
+    # + vertical peak senstivity increases from 1 to 14 w/ 12-14 exclusive to strat.
+    # + 7 temporarily corrupted for large JEDI-GSI file (JJG, 27 MAR 2019)
+    # + 8 is noisy/degraded on n19
+
+
+#    - obs space:
+#        name: AMSUA-NOAA19--hydro
+#        obsdatain:
+#          engine:
+#            type: H5File
+#            obsfile: ./amsua_n19_obs_2026-03-15T00:00:00.h5
+#        obsdataout:
+#          engine:
+#            type: H5File
+#            obsfile: ./obsout_3dvar_amsua_n19.h5
+#        simulated variables: [brightnessTemperature]
+#        channels: 1-3,15
+#      obs error:
+#        covariance model: diagonal
+#      obs filters:
+#      - filter: Background Check
+#        apply at iterations: 0,1
+#        threshold: 10
+#      obs operator: &crtmobsoper
+#        name: CRTM
+#        Absorbers: [H2O,O3]
+#        SurfaceWindGeoVars: uv
+#        linear obs operator:
+#          Absorbers: [H2O]
+#        obs options: &crtmobsopts
+#          Sensor_ID: amsua_n19
+#          EndianType: little_endian
+#          CoefficientPath: ./crtm3/
+
+
+output:
+  filename: "./an.$Y-$M-$DT$h.$m.$s.nc"
+  stream name: analysis
+variational:
+  minimizer:
+    algorithm: DRPCG
+  iterations:
+  - geometry:
+      nml_file: "./namelist.atmosphere"
+      streams_file: "./streams.atmosphere"
+    ninner: '50'
+    gradient norm reduction: 1e-10
+    test: 'on'
+    diagnostics:
+      departures: ombg
+  - geometry:
+      nml_file: "./namelist.atmosphere"
+      streams_file: "./streams.atmosphere"
+    ninner: '50'
+    gradient norm reduction: 1e-10
+    test: 'on'
+final:
+  diagnostics:
+    departures: oman
+  increment: # total increment
+    geometry:
+      nml_file: "./namelist.atmosphere"
+      streams_file: "./streams.atmosphere"
+      deallocate non-da fields: true
+    output:
+      state component:
+        filename: "./mpas.3dvar.inc.$Y-$M-$DT$h.$m.$s.nc"
+        stream name: control
+
