@@ -1,7 +1,7 @@
 cost function:
   cost type: 3D-Var
   time window:
-    begin: '2023-12-21T21:00:00Z'
+    begin: '#WINDATE#Z'
     length: PT6H
   geometry:
     nml_file: "./namelist.atmosphere"
@@ -23,8 +23,8 @@ cost function:
     state variables: [w, temperature, spechum, uReconstructZonal, uReconstructMeridional, surface_pressure,
                       qc, qi, qr, qs, qg, theta, rho, u, qv, pressure, landmask, xice, snowc, skintemp,
                       ivgtyp, isltyp, snowh, znt, t2m, vegfra, u10, v10, lai, smois, tslb]
-    filename: "./bg.2023-12-22T00.00.00.nc"
-    date: &analysisdate '2023-12-22T00:00:00Z'
+    filename: "./bg.#ANADATEp#.nc"
+    date: &analysisdate '#ANADATE#Z'
   background error:
     covariance model: SABER
     saber central block:
@@ -55,50 +55,247 @@ cost function:
           - model:
               variables:
               - surface_pressure
+    saber outer blocks:
+    - saber block name: StdDev
+      read:
+        model file:
+          filename: ./B_Matrix/stddev/mpas.stddev.nc
+          date: *analysisdate
+          stream name: control
     linear variable change:
       linear variable change name: Control2Analysis
       input variables: *ctlvars
       output variables: *incvars
+      
   observations:
     observers:
-            # - obs space:
-            # name: Radiosonde
-            # obsdatain:
-            # engine:
-            # type: H5File
-            # obsfile: ./sondes_obs_2023-12-22T00:00:00.h5
-            # obsdataout:
-            # engine:
-            # type: H5File
-            # obsfile: ./obsout_3dvar_sondes.h5
-            # simulated variables: [airTemperature, windEastward, windNorthward, specificHumidity]
-            # obs operator:
-            # name: VertInterp
-            # observation alias file: ./obsop_name_map.yaml
-            # obs error:
-            # covariance model: diagonal
-            # obs filters:
-            # - filter: PreQC
-            #  maxvalue: 3
-            # - filter: Background Check
-            #  threshold: 3
-            # apply at iterations: 0,1
-            # threshold: 3
+    - obs space:
+        name: Radiosonde
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: ./sondes_obs_#ANADATE#.h5
+        obsdataout:
+          engine:
+            type: H5File
+            obsfile: ./obsout_3dvar_sondes.h5
+        simulated variables: [airTemperature, windEastward, windNorthward, specificHumidity]
+      obs operator:
+        name: VertInterp
+        observation alias file: ./obsop_name_map.yaml
+      obs error:
+        covariance model: diagonal
+      obs filters:
+      - filter: PreQC
+        maxvalue: 3
+      - filter: Background Check
+        threshold: 3
+        apply at iterations: 0,1
 
+    - obs space:
+        name: Aircraft
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: ./aircraft_obs_#ANADATE#.h5
+        obsdataout:
+          engine:
+            type: H5File
+            obsfile: ./obsout_3dvar_aircraft.h5
+        simulated variables: [airTemperature, windEastward, windNorthward, specificHumidity]
+      obs operator:
+        name: VertInterp
+        observation alias file: ./obsop_name_map.yaml
+      obs error:
+        covariance model: diagonal
+      obs filters:
+      - filter: PreQC
+        maxvalue: 3
+      - filter: Background Check
+        threshold: 3
+        apply at iterations: 0,1
+
+    - obs space:
+        name: GnssroRefNCEP
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: ./gnssro_obs_#ANADATE#.h5
+        obsdataout:
+          engine:
+            type: H5File
+            obsfile: ./obsout_3dvar_gnssrorefncep.h5
+        simulated variables: [atmosphericRefractivity]
+      obs operator:
+        name: GnssroRefNCEP
+        obs options:
+          use_compress: 0
+      obs error:
+        covariance model: diagonal
+      obs filters:
+      - filter: Domain Check
+        where:
+        - variable:
+            name: MetaData/height
+          minvalue: 0
+          maxvalue: 30000
+        - variable:
+            name: MetaData/earthRadiusCurvature
+          minvalue: 6250000
+          maxvalue: 6450000
+        - variable:
+            name: MetaData/geoidUndulation
+          minvalue: -200
+          maxvalue: 200
+      - filter: Background Check
+        apply at iterations: 0,1
+        threshold: 3
+      - filter: ROobserror
+        apply at iterations: 0,1
+        variable: refractivity
+        errmodel: NCEP
+
+    - obs space:
+        name: Surface T,Q,Ps
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: ./sfc_obs_#ANADATE#.h5
+        obsdataout:
+          engine:
+            type: H5File
+            obsfile: ./obsout_3dvar_sfc.h5
+        simulated variables: [stationPressure, airTemperature, specificHumidity]
+      obs operator:
+        name: Composite
+        components:
+        - name: VertInterp
+          vertical coordinate: height
+          observation vertical coordinate: height
+          interpolation method: linear
+          variables:
+          - name: airTemperature
+          - name: specificHumidity
+        - name: SfcPCorrected
+          da_psfc_scheme: UKMO   # or WRFDA
+          variables:
+          - name: stationPressure
+      linear obs operator:
+        name: Composite
+        components:
+        - name: Identity
+          variables:
+          - name: airTemperature
+          - name: specificHumidity
+        - name: Identity
+          variables:
+          - name: stationPressure
+      obs error:
+        covariance model: diagonal
+      obs filters:
+      - filter: PreQC
+        maxvalue: 3
+      - filter: Difference Check
+        apply at iterations: 0,1
+        reference: MetaData/stationElevation
+        value: GeoVaLs/surface_altitude
+        threshold: 500
+      - filter: Background Check
+        apply at iterations: 0,1
+        threshold: 10
+      - filter: Perform Action
+        filter variables:
+        - name: airTemperature
+        - name: specificHumidity
+        action:
+          name: passivate
+
+    - obs space:
+        name: Surface U,V
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: ./sfc_obs_#ANADATE#.h5
+        obsdataout:
+          engine:
+            type: H5File
+            obsfile: ./obsout_3dvar_sfc_wind.h5
+        simulated variables: [windEastward, windNorthward]
+      obs operator:
+        name: VertInterp
+        vertical coordinate: height
+        observation vertical coordinate: height
+        interpolation method: linear
+
+        hofx scaling field: wind_reduction_factor_at_10m
+        hofx scaling field group: GeoVaLs
+        variables:
+        - name: windEastward
+        - name: windNorthward
+      linear obs operator:
+        name: Identity
+        variables:
+        - name: windEastward
+        - name: windNorthward
+      obs error:
+        covariance model: diagonal
+      obs filters:
+      - filter: PreQC
+        maxvalue: 3
+      - filter: Difference Check
+        apply at iterations: 0,1
+        reference: MetaData/stationElevation
+        value: GeoVaLs/surface_altitude
+        threshold: 500
+      - filter: Background Check
+        apply at iterations: 0,1
+        threshold: 10
+      - filter: Perform Action
+        filter variables:
+        - name: windEastward
+        - name: windNorthward
+        action:
+          name: passivate
+
+      - filter: GOMsaver
+        filename: ./geoval_out.nc
+
+    - obs space:
+        name: Satwind
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: ./satwind_obs_#ANADATE#.h5
+        obsdataout:
+          engine:
+            type: H5File
+            obsfile: ./obsout_3dvar_satwind.h5
+        simulated variables: [windEastward, windNorthward]
+      obs operator:
+        name: VertInterp
+        observation alias file: ./obsop_name_map.yaml
+      obs error:
+        covariance model: diagonal
+      obs filters:
+      - filter: PreQC
+        maxvalue: 3
+      - filter: Background Check
+        apply at iterations: 0,1
+        threshold: 3
 
     - obs space:
         name: RadarRW
         obsdatain:
           engine:
             type: H5File
-            obsfile: ./obs_radar_saoroque_vrad_2023-12-22T00:00:0000.h5
+            obsfile: ./obs_radar_saoroque_vrad_#ANADATE#00.h5
         obsdataout:
           engine:
             type: H5File
-            obsfile: ./hofx-mpas.obs_radar_vrad_2023-12-22T00:00:00.h5
+            obsfile: ./hofx-mpas.obs_radar_vrad_#ANADATE#00.h5
         simulated variables: [radialVelocity]
       geovals:
-        filename: ./geovals-obs_radar_vrad_2023-12-22T00:00:00.h5
+        filename: ./geovals-obs_radar_vrad_#ANADATE#00.h5
       obs error:
         covariance model: diagonal
       obs operator:
@@ -109,14 +306,14 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: ./obs_radar_saoroque_ref_2023-12-22T00:00:0000.h5
+            obsfile: ./obs_radar_saoroque_ref_#ANADATE#00.h5
         obsdataout:
           engine:
             type: H5File
-            obsfile: ./hofx-mpas.obs_radar_cappi_2023-12-22T00:00:0000.h5
+            obsfile: ./hofx-mpas.obs_radar_cappi_#ANADATE#00.h5
         simulated variables: [reflectivity]
       geovals:
-        filename: ./geovals-obs_radar_cappi_2023-12-22T00:00:0000.h5
+        filename: ./geovals-obs_radar_cappi_#ANADATE#00.h5
       vector ref: TestReference
       tolerance: 1.e-6
       obs operator:
@@ -141,7 +338,7 @@ cost function:
 #        obsdatain:
 #          engine:
 #            type: H5File
-#            obsfile: ./amsua_n19_obs_2026-03-15T00:00:00.h5
+#            obsfile: ./amsua_n19_obs_#ANADATE#.h5
 #        obsdataout:
 #          engine:
 #            type: H5File
