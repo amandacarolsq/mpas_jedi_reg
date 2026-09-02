@@ -116,6 +116,7 @@ BEMDIR=${BASEDIR}/bedata
 EXPDIR=${RUNDIR}/${EXP}
 MESH_DIR=${BASEDIR}/pre/meshes/${AREA}
 RUNINIT=${RUNDIR}/${EXP}/runinit/${LABELI:0:4}${LABELI:4:2}${LABELI:6:2}${LABELI:8:2}
+RADAR=${BASEDIR}/radar/saoroque/${LABELI:0:4}${LABELI:4:2}${LABELI:6:2}${LABELI:8:2}
 
 DADIR=${EXPDIR}/runda
 
@@ -182,16 +183,26 @@ sed -e "s,#AREA#,${AREA},g; \
 echo "${inputfile}"
 
 if [ $radaronly == "T" ]; then
-  ln -fs ${OBSDIR}/${LABELI}/obs_radar_mrms_${LABELI}00.h5  ${DADIR}/obs_radar_mrms_${ANADATE}00.h5
- else
-  ln -fs ${OBSDIR}/${LABELI}/aircraft_obs_${LABELI}.h5       ${DADIR}/aircraft_obs_${ANADATE}.h5
-  ln -fs ${OBSDIR}/${LABELI}/gnssro_obs_${LABELI}.h5         ${DADIR}/gnssro_obs_${ANADATE}.h5 
-  ln -fs ${OBSDIR}/${LABELI}/satwind_obs_${LABELI}.h5        ${DADIR}/satwind_obs_${ANADATE}.h5
-  ln -fs ${OBSDIR}/${LABELI}/sfc_obs_${LABELI}.h5            ${DADIR}/sfc_obs_${ANADATE}.h5
-  ln -fs ${OBSDIR}/${LABELI}/sondes_obs_${LABELI}.h5         ${DADIR}/sondes_obs_${ANADATE}.h5 
-  #ln -fs ${OBSDIR}/${LABELI}/amsua_n19_obs_${LABELI}.h5      ${EXPDIR}/amsua_n19_obs_${ANADATE}.h5
-  #ln -fs ${OBSDIR}/${LABELI}/obs_radar_cptec_${LABELI}00.h5  ${EXPDIR}/obs_radar_cptec_${ANADATE}00.h5
+  ln -fs ${RADAR}/vrad/obs_radar_saoroque_vrad_2023-12-22T00:00:0000.nc ${EXPDIR}/obs_radar_saoroque_vrad_2023-12-22T00:00:0000.nc
+  ln -fs ${RADAR}/ref/obs_radar_saoroque_ref_2023-12-22T00:00:0000.nc  ${EXPDIR}/obs_radar_saoroque_ref_2023-12-22T00:00:0000.nc
+else
+  ln -fs ${OBSDIR}/${LABELI}/aircraft_obs_${LABELI}.h5  ${DADIR}/aircraft_obs_${ANADATE}.h5
+  ln -fs ${OBSDIR}/${LABELI}/gnssro_obs_${LABELI}.h5    ${DADIR}/gnssro_obs_${ANADATE}.h5
+  ln -fs ${OBSDIR}/${LABELI}/satwind_obs_${LABELI}.h5   ${DADIR}/satwind_obs_${ANADATE}.h5
+  ln -fs ${OBSDIR}/${LABELI}/sfc_obs_${LABELI}.h5       ${DADIR}/sfc_obs_${ANADATE}.h5
+  ln -fs ${OBSDIR}/${LABELI}/sondes_obs_${LABELI}.h5    ${DADIR}/sondes_obs_${ANADATE}.h5
+
+  #ln -fs ${OBSDIR}/${LABELI}/amsua_n19_obs_${LABELI}.h5 ${EXPDIR}/amsua_n19_obs_${ANADATE}.h5
+
+  ln -fs ${RADAR}/vrad/obs_radar_saoroque_vrad_2023-12-22T00:00:0000.nc ${EXPDIR}/obs_radar_saoroque_vrad_2023-12-22T00:00:0000.nc
+  ln -fs ${RADAR}/ref/obs_radar_saoroque_ref_2023-12-22T00:00:0000.nc  ${EXPDIR}/obs_radar_saoroque_ref_2023-12-22T00:00:0000.nc
 fi
+
+# Converte os dados .nc do radar para o formato IODA
+${EXEDIR}/ioda-upgrade-v2-to-v3.x \
+  ${EXPDIR}/obs_radar_saoroque_ref_2023-12-22T00:00:0000.nc \
+  ${EXPDIR}/obs_radar_saoroque_vrad_2023-12-22T00:00:0000.nc \
+  ${NMLDIR}/ObsSpace.yaml
 
 cp -u ${NMLDIR}/obsop_name_map.yaml       ${DADIR}
 
