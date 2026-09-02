@@ -1,0 +1,141 @@
+cost function:
+  cost type: 3D-Var
+  time window:
+    begin: '#WINDATE#Z'
+    length: PT6H
+  geometry:
+    nml_file: "./namelist.atmosphere"
+    streams_file: "./streams.atmosphere"
+    deallocate non-da fields: true
+    interpolation type: unstructured
+  analysis variables: &incvars
+  - uReconstructZonal
+  - uReconstructMeridional
+  - temperature
+  - spechum
+  - surface_pressure
+  - qc
+  - qi
+  - qr
+  - qs
+  - qg
+  background:
+    state variables: [w, temperature, spechum, uReconstructZonal, uReconstructMeridional, surface_pressure,
+                      qc, qi, qr, qs, qg, theta, rho, u, qv, pressure, landmask, xice, snowc, skintemp,
+                      ivgtyp, isltyp, snowh, znt, t2m, vegfra, u10, v10, lai, smois, tslb]
+    filename: "./bg.#ANADATEp#.nc"
+    date: &analysisdate '#ANADATE#Z'
+  background error:
+    covariance model: SABER
+    saber central block:
+      saber block name: BUMP_NICAS
+      active variables: &ctlvars [uReconstructZonal,uReconstructMeridional,temperature,spechum,surface_pressure,qc,qi,qr,qs,qg]
+      read:
+        io:
+          data directory: ./B_Matrix/bump_nicas
+          files prefix: mpas
+        drivers:
+          multivariate strategy: univariate
+          read local nicas: true
+        nicas:
+          resolution: 4
+          max horizontal grid size: 500000
+        grids:
+          - model:
+              variables:
+              - uReconstructZonal
+              - uReconstructMeridional
+              - temperature
+              - spechum
+              - qc
+              - qi
+              - qr
+              - qs
+              - qg
+          - model:
+              variables:
+              - surface_pressure
+    linear variable change:
+      linear variable change name: Control2Analysis
+      input variables: *ctlvars
+      output variables: *incvars
+      
+  observations:
+    observers:
+    - obs space:
+        name: RadarRW
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: ./obs_radar_saoroque_vrad_#ANADATE#00.h5
+        obsdataout:
+          engine:
+            type: H5File
+            obsfile: ./hofx-mpas.obs_radar_vrad_#ANADATE#00.h5
+        simulated variables: [radialVelocity]
+      geovals:
+        filename: ./geovals-obs_radar_vrad_#ANADATE#00.h5
+      obs error:
+        covariance model: diagonal
+      obs operator:
+        name: RadarRadialVelocity
+
+    - obs space:
+        name: Radar_Reflectivity
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: ./obs_radar_saoroque_ref_#ANADATE#00.h5
+        obsdataout:
+          engine:
+            type: H5File
+            obsfile: ./hofx-mpas.obs_radar_cappi_#ANADATE#00.h5
+        simulated variables: [reflectivity]
+      geovals:
+        filename: ./geovals-obs_radar_cappi_#ANADATE#00.h5
+      vector ref: TestReference
+      tolerance: 1.e-6
+      obs operator:
+        name: DirectZDA
+        #microphysics option: Thompson
+        microphysics option: GFDL
+        use variational method: false
+        vertical coordinate: geopotential_height
+        var_rain_mixing_ratio: rain_water
+        var_snow_mixing_ratio: snow_water
+        var_graupel_mixing_ratio: graupel
+
+output:
+  filename: "./an.$Y-$M-$DT$h.$m.$s.nc"
+  stream name: analysis
+variational:
+  minimizer:
+    algorithm: DRPCG
+  iterations:
+  - geometry:
+      nml_file: "./namelist.atmosphere"
+      streams_file: "./streams.atmosphere"
+    ninner: '50'
+    gradient norm reduction: 1e-10
+    test: 'on'
+    diagnostics:
+      departures: ombg
+  - geometry:
+      nml_file: "./namelist.atmosphere"
+      streams_file: "./streams.atmosphere"
+    ninner: '50'
+    gradient norm reduction: 1e-10
+    test: 'on'
+final:
+  diagnostics:
+    departures: oman
+  increment: # total increment
+    geometry:
+      nml_file: "./namelist.atmosphere"
+      streams_file: "./streams.atmosphere"
+      deallocate non-da fields: true
+    output:
+      state component:
+        filename: "./mpas.3dvar.inc.$Y-$M-$DT$h.$m.$s.nc"
+        stream name: control
+
