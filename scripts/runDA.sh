@@ -43,7 +43,7 @@
 #
 # !REVISION HISTORY:
 #   - Adaptado por Amanda.
-#   - Última atualização: 31 Ago 2026
+#   - Última atualização: 2 Set 2026
 # 
 # !REMARKS:
 #
